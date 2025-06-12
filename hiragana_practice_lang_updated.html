@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>日文五十音練習器 / Hiragana Practice</title>
+    <style>
+        body { font-family: "Helvetica", sans-serif; text-align: center; margin: 40px; background: #f7f7f7; }
+        h1 { color: #2c3e50; }
+        input, button, select { padding: 10px; font-size: 16px; }
+        .kana { font-size: 72px; margin: 20px; }
+        .result { font-size: 18px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1 id="title">🎌 日文五十音練習器</h1>
+
+    <label for="language">🌐 語言 Language:</label>
+    <select id="language" onchange="setLanguage()">
+        <option value="zh">繁體中文</option>
+        <option value="en">English</option>
+    </select>
+
+    <p id="instructions">輸入起始與結束假名（例如：あ 到 こ）：</p>
+    <input id="start" placeholder="起始假名"> 〜 
+    <input id="end" placeholder="結束假名">
+    <button onclick="startQuiz()" id="startBtn">開始練習</button>
+
+    <div id="quiz" style="display:none;">
+        <div class="kana" id="kana"></div>
+        <input id="answer" placeholder="輸入羅馬拼音" onkeydown="if(event.key==='Enter') checkAnswer()">
+        <button onclick="checkAnswer()" id="submitBtn">送出</button>
+        <div class="result" id="feedback"></div>
+    </div>
+
+    <script>
+        const chart = [
+            ["あ", "a"], ["い", "i"], ["う", "u"], ["え", "e"], ["お", "o"],
+            ["か", "ka"], ["き", "ki"], ["く", "ku"], ["け", "ke"], ["こ", "ko"],
+            ["さ", "sa"], ["し", "shi"], ["す", "su"], ["せ", "se"], ["そ", "so"],
+            ["た", "ta"], ["ち", "chi"], ["つ", "tsu"], ["て", "te"], ["と", "to"],
+            ["な", "na"], ["に", "ni"], ["ぬ", "nu"], ["ね", "ne"], ["の", "no"],
+            ["は", "ha"], ["ひ", "hi"], ["ふ", "fu"], ["へ", "he"], ["ほ", "ho"],
+            ["ま", "ma"], ["み", "mi"], ["む", "mu"], ["め", "me"], ["も", "mo"],
+            ["や", "ya"], ["ゆ", "yu"], ["よ", "yo"],
+            ["ら", "ra"], ["り", "ri"], ["る", "ru"], ["れ", "re"], ["ろ", "ro"],
+            ["わ", "wa"], ["を", "wo"], ["ん", "n"]
+        ];
+
+        let selected = [], current = 0, score = 0;
+        let lang = "zh";
+
+        const texts = {
+            zh: {
+                title: "🎌 日文五十音練習器",
+                instructions: "輸入起始與結束假名（例如：あ 到 こ）：",
+                startBtn: "開始練習",
+                submitBtn: "送出",
+                correct: "✅ 正確！",
+                wrong: (correct) => `❌ 錯誤，正確答案是 ${correct}`,
+                score: (score, total) => `🎯 得分：${score} / ${total}`,
+                alert: "⚠️ 假名輸入錯誤，請重新輸入！",
+                inputPlaceholder: "輸入羅馬拼音"
+            },
+            en: {
+                title: "🎌 Hiragana Practice Tool",
+                instructions: "Enter start and end kana (e.g., あ to こ):",
+                startBtn: "Start Quiz",
+                submitBtn: "Submit",
+                correct: "✅ Correct!",
+                wrong: (correct) => `❌ Incorrect, correct answer: ${correct}`,
+                score: (score, total) => `🎯 Score: ${score} / ${total}`,
+                alert: "⚠️ Invalid kana range!",
+                inputPlaceholder: "Enter romaji"
+            }
+        };
+
+        function setLanguage() {
+            lang = document.getElementById("language").value;
+            document.getElementById("title").innerText = texts[lang].title;
+            document.getElementById("instructions").innerText = texts[lang].instructions;
+            document.getElementById("startBtn").innerText = texts[lang].startBtn;
+            document.getElementById("submitBtn").innerText = texts[lang].submitBtn;
+            document.getElementById("answer").placeholder = texts[lang].inputPlaceholder;
+        }
+
+        function startQuiz() {
+            const startKana = document.getElementById("start").value;
+            const endKana = document.getElementById("end").value;
+            const startIndex = chart.findIndex(p => p[0] === startKana);
+            const endIndex = chart.findIndex(p => p[0] === endKana);
+            if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
+                alert(texts[lang].alert);
+                return;
+            }
+            selected = chart.slice(startIndex, endIndex + 1);
+            selected = shuffle(selected);
+            current = 0;
+            score = 0;
+            document.getElementById("quiz").style.display = "block";
+            document.getElementById("feedback").innerText = "";
+            nextQuestion();
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function nextQuestion() {
+            if (current >= selected.length) {
+                document.getElementById("kana").innerText = texts[lang].score(score, selected.length);
+                document.getElementById("answer").style.display = "none";
+                document.getElementById("submitBtn").style.display = "none";
+                return;
+            }
+            document.getElementById("kana").innerText = selected[current][0];
+            document.getElementById("answer").value = "";
+            document.getElementById("answer").focus();
+        }
+
+        function checkAnswer() {
+            const user = document.getElementById("answer").value.trim().toLowerCase();
+            const correct = selected[current][1];
+            const feedback = document.getElementById("feedback");
+            if (user === correct) {
+                feedback.innerText = texts[lang].correct;
+                score++;
+            } else {
+                feedback.innerText = texts[lang].wrong(correct);
+            }
+            current++;
+            setTimeout(() => {
+                feedback.innerText = "";
+                nextQuestion();
+            }, 1000);
+        }
+
+        window.onload = setLanguage;
+    
+        const romajiToKana = {'a': 'あ', 'i': 'い', 'u': 'う', 'e': 'え', 'o': 'お', 'ka': 'か', 'ki': 'き', 'ku': 'く', 'ke': 'け', 'ko': 'こ', 'sa': 'さ', 'shi': 'し', 'su': 'す', 'se': 'せ', 'so': 'そ', 'ta': 'た', 'chi': 'ち', 'tsu': 'つ', 'te': 'て', 'to': 'と', 'na': 'な', 'ni': 'に', 'nu': 'ぬ', 'ne': 'ね', 'no': 'の', 'ha': 'は', 'hi': 'ひ', 'fu': 'ふ', 'he': 'へ', 'ho': 'ほ', 'ma': 'ま', 'mi': 'み', 'mu': 'む', 'me': 'め', 'mo': 'も', 'ya': 'や', 'yu': 'ゆ', 'yo': 'よ', 'ra': 'ら', 'ri': 'り', 'ru': 'る', 're': 'れ', 'ro': 'ろ', 'wa': 'わ', 'wo': 'を', 'n': 'ん'};
+
+        function normalizeKana(input) {
+            if (chart.find(p => p[0] === input)) return input;
+            return romajiToKana[input.toLowerCase()] || "";
+        }
+
+        function startQuiz() {
+            const startKana = normalizeKana(document.getElementById("start").value.trim());
+            const endKana = normalizeKana(document.getElementById("end").value.trim());
+            const startIndex = chart.findIndex(p => p[0] === startKana);
+            const endIndex = chart.findIndex(p => p[0] === endKana);
+            if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
+                alert(texts[lang].alert);
+                return;
+            }
+            selected = chart.slice(startIndex, endIndex + 1);
+            selected = shuffle(selected);
+            current = 0;
+            score = 0;
+            document.getElementById("quiz").style.display = "block";
+            document.getElementById("feedback").innerText = "";
+            nextQuestion();
+        }
+
+        function setLanguage() {
+            lang = document.getElementById("language").value;
+            document.getElementById("title").innerText = texts[lang].title;
+            document.getElementById("instructions").innerText = texts[lang].instructions;
+            document.getElementById("startBtn").innerText = texts[lang].startBtn;
+            document.getElementById("submitBtn").innerText = texts[lang].submitBtn;
+            document.getElementById("answer").placeholder = texts[lang].inputPlaceholder;
+            document.getElementById("start").placeholder = lang === 'en' ? 'Start kana (e.g. a)' : '起始假名';
+            document.getElementById("end").placeholder = lang === 'en' ? 'End kana (e.g. ko)' : '結束假名';
+        }
+        </script>
+</body>
+</html>
