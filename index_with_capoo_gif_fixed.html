@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>50 Sounds Practice / 日文五十音練習器</title>
+    <style>
+        body { font-family: "Helvetica", sans-serif; text-align: center; margin: 40px; background: #f7f7f7; }
+        h1 { color: #2c3e50; }
+        input, button, select { padding: 10px; font-size: 16px; }
+        .kana { font-size: 72px; margin: 20px; }
+        .result { font-size: 18px; margin-top: 20px; }
+        .quiz-container { display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1 id="title">🌜 日文五十音練習器</h1>
+
+    <label for="language">🌐 語言 Language:</label>
+    <select id="language" onchange="setLanguage()">
+        <option value="zh">繁體中文</option>
+        <option value="en">English</option>
+    </select>
+
+    <p id="instructions">輸入起始與結束假名（例如：あ 到 こ）：</p>
+    <input id="start" placeholder="起始假名"> 〜 
+    <input id="end" placeholder="結束假名">
+    <button onclick="startQuiz()" id="startBtn">開始練習</button>
+
+    <div id="quiz" style="display:none;">
+        <div class="quiz-container">
+            <div>
+                <div class="kana" id="kana"></div>
+                <input id="answer" placeholder="輸入羅馬拼音" onkeydown="if(event.key==='Enter') checkAnswer()">
+                <button onclick="checkAnswer()" id="submitBtn">送出</button>
+                <div class="result" id="feedback"></div>
+            </div>
+            <img src="咖波種子.gif" alt="Capoo GIF" style="width:150px; height:auto;">
+        </div>
+    </div>
+
+    <script>
+    const chart = [
+        ["あ", "a"], ["い", "i"], ["う", "u"], ["え", "e"], ["お", "o"],
+        ["か", "ka"], ["き", "ki"], ["く", "ku"], ["け", "ke"], ["こ", "ko"],
+        ["さ", "sa"], ["し", "shi"], ["す", "su"], ["せ", "se"], ["そ", "so"],
+        ["た", "ta"], ["ち", "chi"], ["つ", "tsu"], ["て", "te"], ["と", "to"],
+        ["な", "na"], ["に", "ni"], ["ぬ", "nu"], ["ね", "ne"], ["の", "no"],
+        ["は", "ha"], ["ひ", "hi"], ["ふ", "fu"], ["へ", "he"], ["ほ", "ho"],
+        ["ま", "ma"], ["み", "mi"], ["む", "mu"], ["め", "me"], ["も", "mo"],
+        ["や", "ya"], ["ゆ", "yu"], ["よ", "yo"],
+        ["ら", "ra"], ["り", "ri"], ["る", "ru"], ["れ", "re"], ["ろ", "ro"],
+        ["わ", "wa"], ["を", "wo"], ["ん", "n"]
+    ];
+
+    const romajiToKana = Object.fromEntries(chart.map(([k,r]) => [r,k]));
+
+    let selected = [], current = 0, score = 0;
+    let lang = "zh";
+
+    const texts = {
+        zh: {
+            title: "🌜 日文五十音練習器",
+            instructions: "輸入起始與結束假名（例如：あ 到 こ）：",
+            startBtn: "開始練習",
+            submitBtn: "送出",
+            correct: "✅ 正確！",
+            wrong: correct => `❌ 錯誤，正確答案是 ${correct}`,
+            score: (score, total) => `🌟 得分：${score} / ${total}`,
+            alert: "⚠️ 假名輸入錯誤，請重新輸入！",
+            inputPlaceholder: "輸入羅馬拼音"
+        },
+        en: {
+            title: "🌟 50 Sounds Practice",
+            instructions: "Enter start and end kana (e.g., あ to こ):",
+            startBtn: "Start Quiz",
+            submitBtn: "Submit",
+            correct: "✅ Correct!",
+            wrong: correct => `❌ Incorrect, correct answer: ${correct}`,
+            score: (score, total) => `🌟 Score: ${score} / ${total}`,
+            alert: "⚠️ Invalid kana range!",
+            inputPlaceholder: "Enter romaji"
+        }
+    };
+
+    function setLanguage() {
+        lang = document.getElementById("language").value;
+        const t = texts[lang];
+        document.getElementById("title").innerText = t.title;
+        document.getElementById("instructions").innerText = t.instructions;
+        document.getElementById("startBtn").innerText = t.startBtn;
+        document.getElementById("submitBtn").innerText = t.submitBtn;
+        document.getElementById("answer").placeholder = t.inputPlaceholder;
+        document.getElementById("start").placeholder = lang === 'en' ? 'Start kana (e.g. a)' : '起始假名';
+        document.getElementById("end").placeholder = lang === 'en' ? 'End kana (e.g. ko)' : '結束假名';
+    }
+
+    function normalize(input) {
+        if (chart.find(p => p[0] === input)) return input;
+        return romajiToKana[input.toLowerCase()] || "";
+    }
+
+    function startQuiz() {
+        const startKana = normalize(document.getElementById("start").value.trim());
+        const endKana = normalize(document.getElementById("end").value.trim());
+        const startIndex = chart.findIndex(p => p[0] === startKana);
+        const endIndex = chart.findIndex(p => p[0] === endKana);
+        if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
+            alert(texts[lang].alert);
+            return;
+        }
+        selected = shuffle(chart.slice(startIndex, endIndex + 1));
+        current = 0;
+        score = 0;
+        document.getElementById("quiz").style.display = "block";
+        document.getElementById("feedback").innerText = "";
+        nextQuestion();
+    }
+
+    function nextQuestion() {
+        if (current >= selected.length) {
+            document.getElementById("kana").innerText = texts[lang].score(score, selected.length);
+            document.getElementById("answer").style.display = "none";
+            document.getElementById("submitBtn").style.display = "none";
+            return;
+        }
+        document.getElementById("kana").innerText = selected[current][0];
+        document.getElementById("answer").value = "";
+        document.getElementById("answer").style.display = "inline";
+        document.getElementById("submitBtn").style.display = "inline";
+        document.getElementById("answer").focus();
+    }
+
+    function checkAnswer() {
+        const user = document.getElementById("answer").value.trim().toLowerCase();
+        const correct = selected[current][1];
+        const feedback = document.getElementById("feedback");
+        if (user === correct) {
+            feedback.innerText = texts[lang].correct;
+            score++;
+        } else {
+            feedback.innerText = texts[lang].wrong(correct);
+        }
+        current++;
+        setTimeout(() => {
+            feedback.innerText = "";
+            nextQuestion();
+        }, 1000);
+    }
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    window.onload = setLanguage;
+    </script>
+</body>
+</html>
