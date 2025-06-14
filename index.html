@@ -17,6 +17,7 @@
         .group label { margin: 5px 0; }
         /* 隱藏行模式的按鈕容器，切換時顯示 */
         #checkbox-start-btn { display: none; margin-top: 20px; }
+
     </style>
 </head>
 <body>
@@ -93,6 +94,7 @@
         ["ら","ra"],["り","ri"],["る","ru"],["れ","re"],["ろ","ro"],
         ["わ","wa"],["を","wo"],["ん","n"]
     ];
+    
     const rowMap = {
         a:["あ","い","う","え","お"], k:["か","き","く","け","こ"],
         s:["さ","し","す","せ","そ"], t:["た","ち","つ","て","と"],
@@ -100,19 +102,46 @@
         m:["ま","み","む","め","も"], y:["や","ゆ","よ"],
         r:["ら","り","る","れ","ろ"], w:["わ","を"], nn:["ん"]
     };
+    
     const rowKana = { a:"あ", k:"か", s:"さ", t:"た", n:"な", h:"は", m:"ま", y:"や", r:"ら", w:"わ", nn:"ん" };
     const romajiToKana = Object.fromEntries(chart.map(([k,r])=>[r,k]));
+    
     let selected=[], current=0, score=0, lang="zh";
+    
     const texts={
-        zh:{ title:"🎌 日文五十音練習器", instructions:"輸入起始與結束假名（例如：あ 到 こ）：", checkboxLabel:"選擇要練習的行：", startBtn:"開始練習", submitBtn:"送出", correct:"✅ 正確！", wrong:c=>`❌ 錯誤，正確答案是 ${c}`, score:(s,t)=>`🌟 得分：${s} / ${t}`, alert:"⚠️ 請先選擇有效範圍或至少一個行！", modeRange:"範圍輸入", modeCheckbox:"行選取"},
-        en:{ title:"🎌 50 Sounds Practice", instructions:"Enter start and end kana (e.g., あ to こ):", checkboxLabel:"Select rows to practice:", startBtn:"Start Quiz", submitBtn:"Submit", correct:"✅ Correct!", wrong:c=>`❌ Incorrect, correct answer: ${c}`, score:(s,t)=>`🌟 Score: ${s} / ${t}`, alert:"⚠️ Invalid range or no row selected!", modeRange:"Range Input", modeCheckbox:"Select Rows"}
+        zh:{ 
+            title:"🎌 日文五十音練習器", 
+            instructions:"輸入起始與結束假名（例如：あ 到 こ）：", 
+            checkboxLabel:"選擇要練習的行：", 
+            startBtn:"開始練習", 
+            submitBtn:"送出", 
+            correct:"✅ 正確！", 
+            wrong:c=>`❌ 錯誤，正確答案是 ${c}`, 
+            score:(s,t)=>`🌟 得分：${s} / ${t}`, 
+            alert:"⚠️ 請先選擇有效範圍或至少一個行！", 
+            modeRange:"範圍輸入", 
+            modeCheckbox:"行選取"
+        },
+        en:{ 
+            title:"🎌 50 Sounds Practice", 
+            instructions:"Enter start and end kana (e.g., あ to こ):", 
+            checkboxLabel:"Select rows to practice:", 
+            startBtn:"Start Quiz", 
+            submitBtn:"Submit", 
+            correct:"✅ Correct!", 
+            wrong:c=>`❌ Incorrect, correct answer: ${c}`, 
+            score:(s,t)=>`🌟 Score: ${s} / ${t}`, 
+            alert:"⚠️ Invalid range or no row selected!", 
+            modeRange:"Range Input", 
+            modeCheckbox:"Select Rows"
+        }
     };
+    
     function setLanguage(){
         lang=document.getElementById("language").value;
         const t=texts[lang];
         document.getElementById("title").innerText=t.title;
         document.getElementById("instructions").innerText=t.instructions;
-        document.getElementById("checkboxInstructions").innerText=t.checkboxLabel;
         document.getElementById("label-range").innerText=t.modeRange;
         document.getElementById("label-checkbox").innerText=t.modeCheckbox;
         document.querySelectorAll(".startBtn").forEach(b=>b.innerText=t.startBtn);
@@ -125,18 +154,31 @@
             span.innerText=lang==="en"?`${rowKana[r]} row`:`${rowKana[r]}行`;
         });
     }
+    
     function toggleMode(v){
         document.getElementById('range-mode').style.display=v==='range'?'block':'none';
         document.getElementById('checkbox-mode').style.display=v==='checkbox'?'flex':'none';
         document.getElementById('checkbox-start-btn').style.display=v==='checkbox'?'block':'none';
     }
+    
     function normalize(input){
         if(chart.find(p=>p[0]===input)) return input;
         return romajiToKana[input.toLowerCase()]||"";
     }
+    
+    function shuffle(array) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+    }
+    
     function startQuiz(){
         const mode=document.querySelector('input[name="mode"]:checked').value;
         let kanaList=[];
+        
         if(mode==='range'){
             const s=normalize(document.getElementById("start").value.trim());
             const e=normalize(document.getElementById("end").value.trim());
@@ -148,28 +190,52 @@
             if(!checks.length){alert(texts[lang].alert);return;}
             checks.forEach(r=>rowMap[r].forEach(k=>kanaList.push([k,chart.find(c=>c[0]===k)[1]])));
         }
-        selected=shuffle(kanaList);current=0;score=0;
+        
+        selected=shuffle(kanaList);
+        current=0;
+        score=0;
         document.getElementById("quiz").style.display="block";
         document.getElementById("feedback").innerText="";
         document.getElementById("answer").style.display="inline";
         document.getElementById("submitBtn").style.display="inline";
         nextQuestion();
     }
+    
     function nextQuestion(){
         if(current>=selected.length){
             document.getElementById("kana").innerText=texts[lang].score(score,selected.length);
             document.getElementById("answer").style.display="none";
             document.getElementById("submitBtn").style.display="none";
+            document.getElementById("feedback").innerText="";
             return;
         }
         document.getElementById("kana").innerText=selected[current][0];
         document.getElementById("answer").value="";
         document.getElementById("answer").focus();
+        document.getElementById("feedback").innerText="";
     }
+    
     function checkAnswer(){
         const user=document.getElementById("answer").value.trim().toLowerCase();
         const char=selected[current][0];
         const corrects=char==="を"?["wo","o"]:[selected[current][1]];
         const feedback=document.getElementById("feedback");
-        if(corrects.includes(user)){feedback.innerText=texts[lang].correct;score++;} else{feedback.innerText=texts[lang].wrong(correct
-]
+        
+        if(corrects.includes(user)){
+            feedback.innerText=texts[lang].correct;
+            feedback.style.color="#27ae60";
+            score++;
+        } else {
+            feedback.innerText=texts[lang].wrong(corrects[0]);
+            feedback.style.color="#e74c3c";
+        }
+        
+        current++;
+        setTimeout(nextQuestion, 1500);
+    }
+    
+    // 初始化語言設定
+    setLanguage();
+    </script>
+</body>
+</html>
