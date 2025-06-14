@@ -10,26 +10,27 @@
         .kana { font-size: 72px; margin: 20px; }
         .result { font-size: 18px; margin-top: 20px; }
         .quiz-container { display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 30px; }
-        #checkbox-mode label { margin-right: 10px; }
+        #checkbox-mode label, #mode-select label { margin-right: 10px; }
     </style>
 </head>
 <body>
     <h1 id="title">🎌 日文五十音練習器</h1>
 
+    <!-- 語言選擇 (始終可見) -->
+    <label for="language">🌐 語言 Language:</label>
+    <select id="language" onchange="setLanguage()">
+        <option value="zh">繁體中文</option>
+        <option value="en">English</option>
+    </select>
+
     <!-- 模式選擇 -->
-    <div id="mode-select">
+    <div id="mode-select" style="margin-top:20px;">
         <label><input type="radio" name="mode" value="range" checked onchange="toggleMode(this.value)"><span id="label-range">範圍輸入</span></label>
         <label><input type="radio" name="mode" value="checkbox" onchange="toggleMode(this.value)"><span id="label-checkbox">行選取</span></label>
     </div>
 
     <!-- 範圍輸入模式 -->
-    <div id="range-mode">
-        <label for="language">🌐 語言 Language:</label>
-        <select id="language" onchange="setLanguage()">
-            <option value="zh">繁體中文</option>
-            <option value="en">English</option>
-        </select>
-
+    <div id="range-mode" style="margin-top:10px;">
         <p id="instructions">輸入起始與結束假名（例如：あ 到 こ）：</p>
         <input id="start" placeholder="起始假名"> 〜 
         <input id="end" placeholder="結束假名">
@@ -37,7 +38,7 @@
     </div>
 
     <!-- 行選取模式 -->
-    <div id="checkbox-mode" style="display:none;">
+    <div id="checkbox-mode" style="display:none; margin-top:10px;">
         <p id="checkboxInstructions">選擇要練習的行：</p>
         <label><input type="checkbox" name="row" value="a"><span class="row-label" data-row="a">あ行</span></label>
         <label><input type="checkbox" name="row" value="k"><span class="row-label" data-row="k">か行</span></label>
@@ -53,151 +54,107 @@
         <br><button class="startBtn" onclick="startQuiz()">開始練習</button>
     </div>
 
+    <!-- 測驗區 -->
     <div id="quiz" style="display:none;">
         <div class="quiz-container" style="flex-direction: column;">
             <div class="kana" id="kana"></div>
             <input id="answer" placeholder="輸入羅馬拼音" onkeydown="if(event.key==='Enter') checkAnswer()">
             <button onclick="checkAnswer()" id="submitBtn">送出</button>
             <div class="result" id="feedback"></div>
-            <!-- 保留原本的咖波種子 GIF -->
             <img src="咖波種子.gif" alt="咖波種子 GIF" style="width:300px; height:auto; margin-top: 20px;">
         </div>
     </div>
 
     <script>
+    // 假名對照表
     const chart = [
-        ["あ", "a"], ["い", "i"], ["う", "u"], ["え", "e"], ["お", "o"],
-        ["か", "ka"], ["き", "ki"], ["く", "ku"], ["け", "ke"], ["こ", "ko"],
-        ["さ", "sa"], ["し", "shi"], ["す", "su"], ["せ", "se"], ["そ", "so"],
-        ["た", "ta"], ["ち", "chi"], ["つ", "tsu"], ["て", "te"], ["と", "to"],
-        ["な", "na"], ["に", "ni"], ["ぬ", "nu"], ["ね", "ne"], ["の", "no"],
-        ["は", "ha"], ["ひ", "hi"], ["ふ", "fu"], ["へ", "he"], ["ほ", "ho"],
-        ["ま", "ma"], ["み", "mi"], ["む", "mu"], ["め", "me"], ["も", "mo"],
-        ["や", "ya"], ["ゆ", "yu"], ["よ", "yo"],
-        ["ら", "ra"], ["り", "ri"], ["る", "ru"], ["れ", "re"], ["ろ", "ro"],
-        ["わ", "wa"], ["を", "wo"], ["ん", "n"]
+        ["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],
+        ["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"],
+        ["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"],
+        ["た","ta"],["ち","chi"],["つ","tsu"],["て","te"],["と","to"],
+        ["な","na"],["に","ni"],["ぬ","nu"],["ね","ne"],["の","no"],
+        ["は","ha"],["ひ","hi"],["ふ","fu"],["へ","he"],["ほ","ho"],
+        ["ま","ma"],["み","mi"],["む","mu"],["め","me"],["も","mo"],
+        ["や","ya"],["ゆ","yu"],["よ","yo"],
+        ["ら","ra"],["り","ri"],["る","ru"],["れ","re"],["ろ","ro"],
+        ["わ","wa"],["を","wo"],["ん","n"]
     ];
-
     const rowMap = {
-        a: ["あ","い","う","え","お"],
-        k: ["か","き","く","け","こ"],
-        s: ["さ","し","す","せ","そ"],
-        t: ["た","ち","つ","て","と"],
-        n: ["な","に","ぬ","ね","の"],
-        h: ["は","ひ","ふ","へ","ほ"],
-        m: ["ま","み","む","め","も"],
-        y: ["や","ゆ","よ"],
-        r: ["ら","り","る","れ","ろ"],
-        w: ["わ","を"],
-        nn: ["ん"]
+        a:["あ","い","う","え","お"], k:["か","き","く","け","こ"],
+        s:["さ","し","す","せ","そ"], t:["た","ち","つ","て","と"],
+        n:["な","に","ぬ","ね","の"], h:["は","ひ","ふ","へ","ほ"],
+        m:["ま","み","む","め","も"], y:["や","ゆ","よ"],
+        r:["ら","り","る","れ","ろ"], w:["わ","を"], nn:["ん"]
     };
-
-    // 用於行標籤的假名對應
     const rowKana = { a:"あ", k:"か", s:"さ", t:"た", n:"な", h:"は", m:"ま", y:"や", r:"ら", w:"わ", nn:"ん" };
 
-    const romajiToKana = Object.fromEntries(chart.map(([k,r]) => [r,k]));
-    let selected = [], current = 0, score = 0;
-    let lang = "zh";
+    const romajiToKana = Object.fromEntries(chart.map(([k,r])=>[r,k]));
 
-    const texts = {
-        zh: {
-            title: "🎌 日文五十音練習器",
-            instructions: "輸入起始與結束假名（例如：あ 到 こ）：",
-            startBtn: "開始練習",
-            submitBtn: "送出",
-            correct: "✅ 正確！",
-            wrong: correct => `❌ 錯誤，正確答案是 ${correct}`,
-            score: (score, total) => `🌟 得分：${score} / ${total}`,
-            alert: "⚠️ 請先選擇有效範圍或至少一個行！",
-            inputPlaceholder: "輸入羅馬拼音",
-            checkboxLabel: "選擇要練習的行：",
-            modeRangeLabel: "範圍輸入",
-            modeCheckboxLabel: "行選取"
-        },
-        en: {
-            title: "🎌 50 Sounds Practice",
-            instructions: "Enter start and end kana (e.g., あ to こ):",
-            startBtn: "Start Quiz",
-            submitBtn: "Submit",
-            correct: "✅ Correct!",
-            wrong: correct => `❌ Incorrect, correct answer: ${correct}`,
-            score: (score, total) => `🌟 Score: ${score} / ${total}`,
-            alert: "⚠️ Invalid range or no row selected!",
-            inputPlaceholder: "Enter romaji",
-            checkboxLabel: "Select rows to practice:",
-            modeRangeLabel: "Range Input",
-            modeCheckboxLabel: "Select Rows"
-        }
+    let selected=[], current=0, score=0;
+    let lang="zh";
+
+    const texts={
+        zh:{ title:"🎌 日文五十音練習器", instructions:"輸入起始與結束假名（例如：あ 到 こ）：", checkboxLabel:"選擇要練習的行：", startBtn:"開始練習", submitBtn:"送出", correct:"✅ 正確！", wrong:c=>`❌ 錯誤，正確答案是 ${c}`, score:(s,t)=>`🌟 得分：${s} / ${t}`, alert:"⚠️ 請先選擇有效範圍或至少一個行！", modeRange:"範圍輸入", modeCheckbox:"行選取"},
+        en:{ title:"🎌 50 Sounds Practice", instructions:"Enter start and end kana (e.g., あ to こ):", checkboxLabel:"Select rows to practice:", startBtn:"Start Quiz", submitBtn:"Submit", correct:"✅ Correct!", wrong:c=>`❌ Incorrect, correct answer: ${c}`, score:(s,t)=>`🌟 Score: ${s} / ${t}`, alert:"⚠️ Invalid range or no row selected!", modeRange:"Range Input", modeCheckbox:"Select Rows"}
     };
 
-    function toggleMode(value) {
-        document.getElementById('range-mode').style.display = value==='range' ? 'block' : 'none';
-        document.getElementById('checkbox-mode').style.display = value==='checkbox' ? 'block' : 'none';
-    }
-
-    function setLanguage() {
+    function setLanguage(){
         lang = document.getElementById("language").value;
         const t = texts[lang];
         document.getElementById("title").innerText = t.title;
         document.getElementById("instructions").innerText = t.instructions;
-        document.getElementById("submitBtn").innerText = t.submitBtn;
-        document.getElementById("answer").placeholder = t.inputPlaceholder;
-        document.getElementById("start").placeholder = lang === 'en' ? 'Start kana (e.g. a)' : '起始假名';
-        document.getElementById("end").placeholder = lang === 'en' ? 'End kana (e.g. ko)' : '結束假名';
         document.getElementById("checkboxInstructions").innerText = t.checkboxLabel;
-        document.getElementById('label-range').innerText = t.modeRangeLabel;
-        document.getElementById('label-checkbox').innerText = t.modeCheckboxLabel;
-        document.querySelectorAll(".startBtn").forEach(btn => btn.innerText = t.startBtn);
-        // 更新每個行標籤
-        document.querySelectorAll('.row-label').forEach(span => {
-            const row = span.dataset.row;
-            span.innerText = lang==='en' ? `${rowKana[row]} row` : `${rowKana[row]}行`;
+        document.getElementById("label-range").innerText = t.modeRange;
+        document.getElementById("label-checkbox").innerText = t.modeCheckbox;
+        document.querySelectorAll(".startBtn").forEach(b=>b.innerText = t.startBtn);
+        document.getElementById("submitBtn").innerText = t.submitBtn;
+        document.getElementById("answer").placeholder = lang==="en"?"Enter romaji":"輸入羅馬拼音";
+        document.getElementById("start").placeholder = lang==="en"?"Start kana (e.g. a)":"起始假名";
+        document.getElementById("end").placeholder = lang==="en"?"End kana (e.g. ko)":"結束假名";
+        // 更新行標籤文字
+        document.querySelectorAll('.row-label').forEach(span=>{
+            const r = span.dataset.row;
+            span.innerText = lang==="en" ? `${rowKana[r]} row` : `${rowKana[r]}行`;
         });
     }
 
-    function normalize(input) {
-        if (chart.find(p => p[0] === input)) return input;
-        return romajiToKana[input.toLowerCase()] || "";
+    function toggleMode(val){
+        document.getElementById("range-mode").style.display = val==="range"?"block":"none";
+        document.getElementById("checkbox-mode").style.display = val==="checkbox"?"block":"none";
     }
 
-    function startQuiz() {
+    function normalize(input){
+        if(chart.find(p=>p[0]===input)) return input;
+        return romajiToKana[input.toLowerCase()]||"";
+    }
+
+    function startQuiz(){
         const mode = document.querySelector('input[name="mode"]:checked').value;
-        let kanaList = [];
-        if (mode === 'range') {
-            const startKana = normalize(document.getElementById("start").value.trim());
-            const endKana = normalize(document.getElementById("end").value.trim());
-            const startIndex = chart.findIndex(p => p[0] === startKana);
-            const endIndex = chart.findIndex(p => p[0] === endKana);
-            if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
-                alert(texts[lang].alert);
-                return;
-            }
-            kanaList = chart.slice(startIndex, endIndex + 1);
+        let kanaList=[];
+        if(mode==="range"){
+            const s = normalize(document.getElementById("start").value.trim());
+            const e = normalize(document.getElementById("end").value.trim());
+            const si = chart.findIndex(p=>p[0]===s), ei = chart.findIndex(p=>p[0]===e);
+            if(si<0||ei<0||si>ei){ alert(texts[lang].alert); return; }
+            kanaList = chart.slice(si, ei+1);
         } else {
-            const checked = Array.from(document.querySelectorAll('input[name="row"]:checked')).map(cb => cb.value);
-            if (checked.length === 0) {
-                alert(texts[lang].alert);
-                return;
-            }
-            checked.forEach(row => {
-                rowMap[row].forEach(k => kanaList.push([k, chart.find(c=>c[0]===k)[1]]));
-            });
+            const checks = Array.from(document.querySelectorAll('input[name="row"]:checked')).map(cb=>cb.value);
+            if(!checks.length){ alert(texts[lang].alert); return; }
+            checks.forEach(r=> rowMap[r].forEach(k=> kanaList.push([k, chart.find(c=>c[0]===k)[1]])));
         }
-        selected = shuffle(kanaList);
-        current = 0;
-        score = 0;
-        document.getElementById("quiz").style.display = "block";
-        document.getElementById("feedback").innerText = "";
-        document.getElementById("answer").style.display = "inline";
-        document.getElementById("submitBtn").style.display = "inline";
+        selected = shuffle(kanaList); current=0; score=0;
+        document.getElementById("quiz").style.display="block";
+        document.getElementById("feedback").innerText="";
+        document.getElementById("answer").style.display="inline";
+        document.getElementById("submitBtn").style.display="inline";
         nextQuestion();
     }
 
-    function nextQuestion() {
-        if (current >= selected.length) {
+    function nextQuestion(){
+        if(current>=selected.length){
             document.getElementById("kana").innerText = texts[lang].score(score, selected.length);
-            document.getElementById("answer").style.display = "none";
-            document.getElementById("submitBtn").style.display = "none";
+            document.getElementById("answer").style.display="none";
+            document.getElementById("submitBtn").style.display="none";
             return;
         }
         document.getElementById("kana").innerText = selected[current][0];
@@ -205,34 +162,23 @@
         document.getElementById("answer").focus();
     }
 
-    function checkAnswer() {
+    function checkAnswer(){
         const user = document.getElementById("answer").value.trim().toLowerCase();
         const char = selected[current][0];
-        // 如果是 "を"，接受 "wo" 或 "o"
-        const correctAnswers = char === "を" ? ["wo", "o"] : [selected[current][1]];
-        const feedback = document.getElementById("feedback");
-        if (correctAnswers.includes(user)) {
-            feedback.innerText = texts[lang].correct;
-            score++;
+        const corrects = char==="を" ? ["wo","o"] : [selected[current][1]];
+        const fb = document.getElementById("feedback");
+        if(corrects.includes(user)){
+            fb.innerText = texts[lang].correct; score++;
         } else {
-            feedback.innerText = texts[lang].wrong(correctAnswers[0]);
+            fb.innerText = texts[lang].wrong(corrects[0]);
         }
         current++;
-        setTimeout(() => {
-            feedback.innerText = "";
-            nextQuestion();
-        }, 1000);
+        setTimeout(()=>{ fb.innerText=""; nextQuestion(); }, 1000);
     }
 
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
+    function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
-    window.onload = setLanguage;
+    window.onload = ()=>{ setLanguage(); };
     </script>
 </body>
 </html>
