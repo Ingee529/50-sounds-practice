@@ -644,8 +644,10 @@
         document.getElementById("group-chouon").innerText = t.groupChouon;
         document.getElementById("sokuon-desc").innerHTML = t.sokuonDesc;
         document.getElementById("chouon-desc").innerHTML = t.chouonDesc;
-        document.getElementById("back-btn").innerText = t.backBtn;
-        document.getElementById("quiz-title").innerText = t.quizTitle;
+        const backBtnEl = document.getElementById("back-btn");
+        if (backBtnEl) backBtnEl.innerText = t.backBtn;
+        const quizTitleEl = document.getElementById("quiz-title");
+        if (quizTitleEl) quizTitleEl.innerText = t.quizTitle;
         document.getElementById("cat-basic").innerText = t.catBasic;
         document.getElementById("cat-dakuten").innerText = t.catDakuten;
         document.getElementById("cat-handakuten").innerText = t.catHandakuten;
