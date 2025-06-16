@@ -1,12 +1,4 @@
-
-
-
-        .page-content {
-            display: block;
-        }
-        .page-content.hidden {
-            display: none;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -19,46 +11,12 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
             min-height: 100vh;
-        },
-        sokuon: {
-            hiragana: [
-                ["きっぷ","kippu"],["がっこう","gakkou"],["きっさてん","kissaten"],
-                ["いっぱい","ippai"],["ざっし","zasshi"],["けっこん","kekkon"],
-                ["りっぱ","rippa"],["ひっし","hisshi"],["せっけん","sekken"],
-                ["にっぽん","nippon"],["さっき","sakki"],["とっきゅう","tokkyuu"],
-                ["こっち","kocchi"],["あっち","acchi"],["そっち","socchi"],
-                ["どっち","docchi"],["みっつ","mittsu"],["よっつ","yottsu"],
-                ["いっしょ","issho"],["ずっと","zutto"]
-            ],
-            katakana: [
-                ["チケット","chiketto"],["サッカー","sakkaa"],["ベッド","beddo"],
-                ["コップ","koppu"],["ホットケーキ","hottokeeki"],["セット","setto"],
-                ["バッグ","baggu"],["エッセイ","essei"],["クッキー","kukkii"],
-                ["アップル","appuru"],["キャップ","kyappu"],["トップ","toppu"],
-                ["ショップ","shoppu"],["チャット","chatto"],["メッセージ","messeeji"],
-                ["アタック","atakku"],["トラック","torakku"],["ブロック","burokku"],
-                ["スタッフ","sutaffu"],["グラス","gurasu"]
-            ]
-        },
-        chouon: {
-            hiragana: [
-                ["おかあさん","okaasan"],["おとうさん","otousan"],["おにいさん","oniisan"],
-                ["おねえさん","oneesan"],["せんせい","sensei"],["でんしゃ","densha"],
-                ["びょういん","byouin"],["くうこう","kuukou"],["そうじ","souji"],
-                ["しゅくだい","shukudai"],["きょうしつ","kyoushitsu"],["ばんごう","bangou"],
-                ["こうえん","kouen"],["ようび","youbi"],["ほうほう","houhou"],
-                ["とうきょう","toukyou"],["おうさま","ousama"],["しゅうまつ","shuumatsu"],
-                ["りょうり","ryouri"],["けいざい","keizai"]
-            ],
-            katakana: [
-                ["コーヒー","koohii"],["ケーキ","keeki"],["スープ","suupu"],
-                ["チーズ","chiizu"],["ビール","biiru"],["メール","meeru"],
-                ["ゲーム","geemu"],["スポーツ","supootsu"],["ニュース","nyuusu"],
-                ["コンピューター","konpyuutaa"],["インターネット","intaanetto"],["テーブル","teeburu"],
-                ["ページ","peeji"],["エネルギー","enerugii"],["パーティー","paatii"],
-                ["タクシー","takushii"],["レストラン","resutoran"],["ホテル","hoteru"],
-                ["カメラ","kamera"],["テレビ","terebi"]
-            ]
+        }
+        .page-content {
+            display: block;
+        }
+        .page-content.hidden {
+            display: none;
         }
         .container {
             background: rgba(255,255,255,0.95);
@@ -700,17 +658,44 @@
         document.getElementById("stat-accuracy").innerText = t.statAccuracy;
         document.getElementById("answer").placeholder = t.answerPlaceholder;
         updateChart();
+
+        const startBtn = document.getElementById("start-btn");
+        if (startBtn) {
+            startBtn.innerText = t.startBtn;
+        }
     }
 
     function showTab(tabName) {
-        console.log("Showing tab:", tabName);
-        
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        // 先隱藏所有 tab-content
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+            tab.style.display = 'none';
+        });
+        // 先移除所有 nav-tab 的 active
         document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-        
-        document.getElementById(tabName + '-tab').classList.add('active');
-        event.target.closest('.nav-tab').classList.add('active');
-        
+
+        // 顯示對應 tab
+        const currentTab = document.getElementById(tabName + '-tab');
+        if (currentTab) {
+            currentTab.classList.add('active');
+            currentTab.style.display = 'block';
+        }
+        // 對應 nav-tab 加 active
+        if (event && event.target) {
+            event.target.closest('.nav-tab').classList.add('active');
+        }
+
+        // 控制「開始練習」按鈕顯示
+        const startBtn = document.getElementById("start-btn");
+        if (startBtn) {
+            if (tabName === 'practice') {
+                startBtn.style.display = "";
+                startBtn.innerText = texts[lang].startBtn;
+            } else {
+                startBtn.style.display = "none";
+            }
+        }
+
         if (tabName === 'chart') {
             updateChart();
             console.log("Chart updated");
@@ -732,6 +717,20 @@
 
     function startQuiz() {
         console.log("startQuiz called");
+        
+        // 清理之前的練習狀態
+        const existingQuizArea = document.getElementById("quiz-area");
+        if (existingQuizArea) {
+            existingQuizArea.style.display = "none";
+        }
+        const inlineQuiz = document.getElementById("inline-quiz");
+        if (inlineQuiz) {
+            inlineQuiz.remove();
+        }
+        const existingQuizHeader = document.getElementById("quiz-header");
+        if (existingQuizHeader) {
+            existingQuizHeader.remove();
+        }
         
         const kanaTypeEl = document.querySelector('input[name="kana-type"]:checked');
         if (!kanaTypeEl) {
@@ -809,36 +808,31 @@
             }
             
             // 創建練習頁面頂部導航
-            let quizHeader = document.getElementById("quiz-header");
-            if (!quizHeader) {
-                console.log("Creating quiz header...");
-                quizHeader = document.createElement("div");
-                quizHeader.id = "quiz-header";
-                quizHeader.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);";
-                
-                const backButton = document.createElement("button");
-                backButton.innerHTML = "← " + texts[lang].backBtn;
-                backButton.style.cssText = "background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;";
-                backButton.onclick = returnToMenu;
-                
-                const title = document.createElement("h2");
-                title.style.cssText = "margin: 0; color: #2c3e50;";
-                title.innerText = texts[lang].quizTitle;
-                
-                const spacer = document.createElement("div");
-                spacer.style.width = "120px";
-                
-                quizHeader.appendChild(backButton);
-                quizHeader.appendChild(title);
-                quizHeader.appendChild(spacer);
-                
-                practiceTab.insertBefore(quizHeader, practiceTab.firstChild);
-                console.log("Quiz header created");
-            }
-            quizHeader.style.display = "flex";
+            let quizHeader = document.createElement("div");
+            quizHeader.id = "quiz-header";
+            quizHeader.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);";
+            
+            const backButton = document.createElement("button");
+            backButton.innerHTML = "← " + texts[lang].backBtn;
+            backButton.style.cssText = "background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;";
+            backButton.onclick = returnToMenu;
+            
+            const title = document.createElement("h2");
+            title.style.cssText = "margin: 0; color: #2c3e50;";
+            title.innerText = texts[lang].quizTitle;
+            
+            const spacer = document.createElement("div");
+            spacer.style.width = "120px";
+            
+            quizHeader.appendChild(backButton);
+            quizHeader.appendChild(title);
+            quizHeader.appendChild(spacer);
+            
+            practiceTab.insertBefore(quizHeader, practiceTab.firstChild);
+            console.log("Quiz header created");
         }
         
-        // 強制顯示測驗內容（移到if外面確保執行）
+        // 強制顯示測驗內容
         console.log("Force showing quiz content...");
         
         // 直接在這裡顯示測驗區域
@@ -889,6 +883,7 @@
         console.log("Calling nextQuestion...");
         nextQuestion();
         console.log("Quiz started successfully");
+        showQuizContent();
     }
 
     function showQuizContent() {
@@ -967,10 +962,10 @@
             }
         }
         
-        // 確保五十音表標籤可以顯示
+        // 修正：不要直接設 display: none，讓 tab 切換時自動管理
         if (chartTab) {
-            chartTab.style.display = "none"; // 初始隱藏，但允許通過標籤切換顯示
-            console.log("Chart tab reset");
+            chartTab.classList.remove('active');
+            console.log("Chart tab reset (remove active class)");
         }
         
         // 隱藏測驗內容
@@ -980,6 +975,10 @@
     }
 
     function hideQuizContent() {
+        // 隱藏 quiz-area
+        const quizArea = document.getElementById("quiz-area");
+        if (quizArea) quizArea.style.display = "none";
+
         // 隱藏進度條容器
         const progressBar = document.querySelector(".progress-bar");
         if (progressBar) progressBar.style.display = "none";
