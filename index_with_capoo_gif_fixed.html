@@ -1,162 +1,1279 @@
 
-<!DOCTYPE html>
+        .page-content {
+            display: block;
+        }
+        .page-content.hidden {
+            display: none;
+        }<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>50 Sounds Practice / 日文五十音練習器</title>
+    <title>Complete Japanese Kana Practice / 完整日文五十音練習器</title>
     <style>
-        body { font-family: "Helvetica", sans-serif; text-align: center; margin: 40px; background: #f7f7f7; }
-        h1 { color: #2c3e50; }
-        input, button, select { padding: 10px; font-size: 16px; }
-        .kana { font-size: 72px; margin: 20px; }
-        .result { font-size: 18px; margin-top: 20px; }
-        .quiz-container { display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 30px; }
+        body { 
+            font-family: "Helvetica", "Yu Gothic", sans-serif; 
+            text-align: center; 
+            margin: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        },
+        sokuon: {
+            hiragana: [
+                ["きっぷ","kippu"],["がっこう","gakkou"],["きっさてん","kissaten"],
+                ["いっぱい","ippai"],["ざっし","zasshi"],["けっこん","kekkon"],
+                ["りっぱ","rippa"],["ひっし","hisshi"],["せっけん","sekken"],
+                ["にっぽん","nippon"],["さっき","sakki"],["とっきゅう","tokkyuu"],
+                ["こっち","kocchi"],["あっち","acchi"],["そっち","socchi"],
+                ["どっち","docchi"],["みっつ","mittsu"],["よっつ","yottsu"],
+                ["いっしょ","issho"],["ずっと","zutto"]
+            ],
+            katakana: [
+                ["チケット","chiketto"],["サッカー","sakkaa"],["ベッド","beddo"],
+                ["コップ","koppu"],["ホットケーキ","hottokeeki"],["セット","setto"],
+                ["バッグ","baggu"],["エッセイ","essei"],["クッキー","kukkii"],
+                ["アップル","appuru"],["キャップ","kyappu"],["トップ","toppu"],
+                ["ショップ","shoppu"],["チャット","chatto"],["メッセージ","messeeji"],
+                ["アタック","atakku"],["トラック","torakku"],["ブロック","burokku"],
+                ["スタッフ","sutaffu"],["グラス","gurasu"]
+            ]
+        },
+        chouon: {
+            hiragana: [
+                ["おかあさん","okaasan"],["おとうさん","otousan"],["おにいさん","oniisan"],
+                ["おねえさん","oneesan"],["せんせい","sensei"],["でんしゃ","densha"],
+                ["びょういん","byouin"],["くうこう","kuukou"],["そうじ","souji"],
+                ["しゅくだい","shukudai"],["きょうしつ","kyoushitsu"],["ばんごう","bangou"],
+                ["こうえん","kouen"],["ようび","youbi"],["ほうほう","houhou"],
+                ["とうきょう","toukyou"],["おうさま","ousama"],["しゅうまつ","shuumatsu"],
+                ["りょうり","ryouri"],["けいざい","keizai"]
+            ],
+            katakana: [
+                ["コーヒー","koohii"],["ケーキ","keeki"],["スープ","suupu"],
+                ["チーズ","chiizu"],["ビール","biiru"],["メール","meeru"],
+                ["ゲーム","geemu"],["スポーツ","supootsu"],["ニュース","nyuusu"],
+                ["コンピューター","konpyuutaa"],["インターネット","intaanetto"],["テーブル","teeburu"],
+                ["ページ","peeji"],["エネルギー","enerugii"],["パーティー","paatii"],
+                ["タクシー","takushii"],["レストラン","resutoran"],["ホテル","hoteru"],
+                ["カメラ","kamera"],["テレビ","terebi"]
+            ]
+        }
+        .container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2c3e50; margin-bottom: 30px; }
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 5px;
+        }
+        .nav-tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 0 5px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .nav-tab.active {
+            background: #667eea;
+            color: white;
+        }
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+        .nav-tab.active:hover {
+            background: #5a6fd8;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        input, button, select { 
+            padding: 12px; 
+            font-size: 16px; 
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 5px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        .kana { 
+            font-size: 72px; 
+            margin: 20px; 
+            color: #2c3e50;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .result { 
+            font-size: 18px; 
+            margin-top: 20px; 
+            font-weight: 500;
+        }
+        .quiz-container { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 30px; 
+            margin-top: 30px; 
+        }
+        .mode-select { 
+            display: flex; 
+            justify-content: center; 
+            gap: 20px; 
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .mode-select label { 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .mode-select label:hover {
+            background: #e9ecef;
+        }
+        .checkbox-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; 
+            margin: 20px 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .checkbox-group { 
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .checkbox-group:hover {
+            border-color: #667eea;
+        }
+        .checkbox-group h4 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+            font-size: 16px;
+        }
+        .checkbox-group label { 
+            display: block;
+            margin: 8px 0;
+            text-align: left;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .checkbox-group label:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        .chart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .chart-table th, .chart-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        .chart-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        .chart-table td {
+            font-size: 18px;
+            transition: background 0.2s;
+        }
+        .chart-table td:hover {
+            background: #f8f9fa;
+        }
+        .kana-char {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .romaji {
+            font-size: 14px;
+            color: #666;
+            font-family: monospace;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 120px;
+            margin: 5px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .container { margin: 10px; padding: 20px; }
+            .kana { font-size: 48px; }
+            .checkbox-grid { grid-template-columns: 1fr; }
+            .quiz-container { flex-direction: column; gap: 15px; }
+        }
     </style>
 </head>
 <body>
-    <h1 id="title">🌜 日文五十音練習器</h1>
+    <div class="container">
+        <h1 id="title">🎌 日文五十音練習器</h1>
+        <p style="margin: -10px 0 20px 0; color: #666; font-size: 14px;">作者: Ingee</p>
 
-    <label for="language">🌐 語言 Language:</label>
-    <select id="language" onchange="setLanguage()">
-        <option value="zh">繁體中文</option>
-        <option value="en">English</option>
-    </select>
+        <!-- 語言選擇 -->
+        <div style="margin-bottom: 20px;">
+            <label for="language">🌐 語言 Language:</label>
+            <select id="language" onchange="setLanguage()">
+                <option value="zh">繁體中文</option>
+                <option value="en">English</option>
+            </select>
+        </div>
 
-    <p id="instructions">輸入起始與結束假名（例如：あ 到 こ）：</p>
-    <input id="start" placeholder="起始假名"> 〜 
-    <input id="end" placeholder="結束假名">
-    <button onclick="startQuiz()" id="startBtn">開始練習</button>
-
-    <div id="quiz" style="display:none;">
-        <div class="quiz-container">
-            <div>
-                <div class="kana" id="kana"></div>
-                <input id="answer" placeholder="輸入羅馬拼音" onkeydown="if(event.key==='Enter') checkAnswer()">
-                <button onclick="checkAnswer()" id="submitBtn">送出</button>
-                <div class="result" id="feedback"></div>
+        <!-- 導航標籤 -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('practice')">
+                <span id="nav-practice">練習模式</span>
             </div>
-            <img src="咖波種子.gif" alt="Capoo GIF" style="width:150px; height:auto;">
+            <div class="nav-tab" onclick="showTab('chart')">
+                <span id="nav-chart">五十音表</span>
+            </div>
+        </div>
+
+        <!-- 練習模式標籤內容 -->
+        <div id="practice-tab" class="tab-content active">
+            <!-- 假名類型選擇 -->
+            <div class="mode-select">
+                <label>
+                    <input type="radio" name="kana-type" value="hiragana" checked                     onclick="
+                        document.getElementById('cat-dakuten').textContent = '濁音 (が,ざ,だ,ば)';
+                        document.getElementById('cat-handakuten').textContent = '半濁音 (ぱ行)';
+                        document.getElementById('cat-youon').textContent = '拗音 (きゃ,しゃ,ちゃ...)';
+                    ">
+                    <span id="type-hiragana">平假名 (ひらがな)</span>
+                </label>
+                <label>
+                    <input type="radio" name="kana-type" value="katakana"                     onclick="
+                        document.getElementById('cat-dakuten').textContent = '濁音 (ガ,ザ,ダ,バ)';
+                        document.getElementById('cat-handakuten').textContent = '半濁音 (パ行)';
+                        document.getElementById('cat-youon').textContent = '拗音 (キャ,シャ,チャ...)';
+                    ">
+                    <span id="type-katakana">片假名 (カタカナ)</span>
+                </label>
+                <label>
+                    <input type="radio" name="kana-type" value="mixed"                     onclick="
+                        document.getElementById('cat-dakuten').textContent = '濁音 (が,ざ,だ,ば)';
+                        document.getElementById('cat-handakuten').textContent = '半濁音 (ぱ行)';
+                        document.getElementById('cat-youon').textContent = '拗音 (きゃ,しゃ,ちゃ...)';
+                    ">
+                    <span id="type-mixed">混合練習</span>
+                </label>
+            </div>
+
+            <!-- 練習範圍選擇 -->
+            <div class="checkbox-grid">
+                <div class="checkbox-group">
+                    <h4 id="group-basic">基本音</h4>
+                    <label><input type="checkbox" name="category" value="basic" checked> <span id="cat-basic">清音 (五十音)</span></label>
+                </div>
+                <div class="checkbox-group">
+                    <h4 id="group-dakuten">濁音</h4>
+                    <label><input type="checkbox" name="category" value="dakuten"> <span id="cat-dakuten">濁音 (が,ざ,だ,ば)</span></label>
+                </div>
+                <div class="checkbox-group">
+                    <h4 id="group-handakuten">半濁音</h4>
+                    <label><input type="checkbox" name="category" value="handakuten"> <span id="cat-handakuten">半濁音 (ぱ行)</span></label>
+                </div>
+                <div class="checkbox-group">
+                    <h4 id="group-youon">拗音</h4>
+                    <label><input type="checkbox" name="category" value="youon"> <span id="cat-youon">拗音 (きゃ,しゃ,ちゃ...)</span></label>
+                </div>
+            </div>
+            </div>
+
+                            <button id="start-btn" onclick="startQuiz()">開始練習</button>
+
+                <!-- 測驗區域 -->
+                <div id="quiz-area" style="display: none;">
+                    <!-- 進度條 -->
+                    <div class="progress-bar" style="width: 100%; height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden; margin: 10px 0;">
+                        <div class="progress-fill" id="progress" style="height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.5s ease; border-radius: 4px; width: 0%;"></div>
+                    </div>
+                    
+                    <!-- 統計資訊 -->
+                    <div class="stats" style="display: flex; justify-content: space-around; margin: 20px 0; flex-wrap: wrap;">
+                        <div class="stat-item" style="background: #f8f9fa; padding: 15px; border-radius: 10px; min-width: 120px; margin: 5px;">
+                            <div class="stat-number" id="current-num" style="font-size: 24px; font-weight: bold; color: #667eea;">1</div>
+                            <div class="stat-label" id="stat-current" style="font-size: 14px; color: #666;">當前題目</div>
+                        </div>
+                        <div class="stat-item" style="background: #f8f9fa; padding: 15px; border-radius: 10px; min-width: 120px; margin: 5px;">
+                            <div class="stat-number" id="total-num" style="font-size: 24px; font-weight: bold; color: #667eea;">0</div>
+                            <div class="stat-label" id="stat-total" style="font-size: 14px; color: #666;">總題數</div>
+                        </div>
+                        <div class="stat-item" style="background: #f8f9fa; padding: 15px; border-radius: 10px; min-width: 120px; margin: 5px;">
+                            <div class="stat-number" id="score-num" style="font-size: 24px; font-weight: bold; color: #667eea;">0</div>
+                            <div class="stat-label" id="stat-score" style="font-size: 14px; color: #666;">正確數</div>
+                        </div>
+                        <div class="stat-item" style="background: #f8f9fa; padding: 15px; border-radius: 10px; min-width: 120px; margin: 5px;">
+                            <div class="stat-number" id="accuracy" style="font-size: 24px; font-weight: bold; color: #667eea;">0%</div>
+                            <div class="stat-label" id="stat-accuracy" style="font-size: 14px; color: #666;">正確率</div>
+                        </div>
+                    </div>
+
+                    <!-- 測驗區 -->
+                    <div class="quiz-container" style="display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 30px; flex-direction: column;">
+                        <div class="kana" id="kana" style="font-size: 72px; margin: 20px; color: #2c3e50; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);"></div>
+                        <input id="answer" placeholder="輸入羅馬拼音" onkeydown="if(event.key==='Enter') checkAnswer()" style="padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; margin: 5px;">
+                        <button onclick="checkAnswer()" id="submit-btn" style="padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; margin: 5px; background: #667eea; color: white; border: none; cursor: pointer;">送出</button>
+                        <div class="result" id="feedback" style="font-size: 18px; margin-top: 20px; font-weight: 500;"></div>
+                        <img src="咖波種子.gif" alt="咖波種子 GIF" style="width:300px; height:auto; margin-top: 20px;">
+                    </div>
+                </div>
+
+            <!-- 測驗區 -->
+            <div id="quiz" style="display:none;">
+                <!-- 進度條 -->
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+                
+                <!-- 統計資訊 -->
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="current-num">1</div>
+                        <div class="stat-label" id="stat-current">當前題目</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="total-num">0</div>
+                        <div class="stat-label" id="stat-total">總題數</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="score-num">0</div>
+                        <div class="stat-label" id="stat-score">正確數</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="accuracy">0%</div>
+                        <div class="stat-label" id="stat-accuracy">正確率</div>
+                    </div>
+                </div>
+
+                <div class="quiz-container" style="flex-direction: column;">
+                    <div class="kana" id="kana"></div>
+                    <input id="answer" placeholder="輸入羅馬拼音" onkeydown="if(event.key==='Enter') checkAnswer()">
+                    <button onclick="checkAnswer()" id="submit-btn">送出</button>
+                    <div class="result" id="feedback"></div>
+                    <img src="咖波種子.gif" alt="咖波種子 GIF" style="width:300px; height:auto; margin-top: 20px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- 五十音表標籤內容 -->
+        <div id="chart-tab" class="tab-content">
+            <div class="mode-select">
+                <label>
+                    <input type="radio" name="chart-type" value="hiragana" checked onchange="updateChart()">
+                    <span>平假名</span>
+                </label>
+                <label>
+                    <input type="radio" name="chart-type" value="katakana" onchange="updateChart()">
+                    <span>片假名</span>
+                </label>
+            </div>
+            <div id="kana-chart"></div>
+            
+            <!-- 概念展示區 -->
+            <div style="margin: 30px 0;">
+                <div class="checkbox-grid" style="pointer-events: none;">
+                    <div class="checkbox-group" style="background: #f0f4ff; border: 2px solid #667eea;">
+                        <h4 id="group-sokuon">促音</h4>
+                        <p style="font-size: 14px; color: #666; margin: 5px 0; text-align: left;" id="sokuon-desc">
+                            小つ (っ)，發音時停頓一拍<br>
+                            例：きっぷ (kippu)、がっこう (gakkou)
+                        </p>
+                    </div>
+                    <div class="checkbox-group" style="background: #f0f4ff; border: 2px solid #667eea;">
+                        <h4 id="group-chouon">長音</h4>
+                        <p style="font-size: 14px; color: #666; margin: 5px 0; text-align: left;" id="chouon-desc">
+                            母音延長，持續兩拍<br>
+                            例：おかあさん (okaasan)、コーヒー (koohii)
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-    const chart = [
-        ["あ", "a"], ["い", "i"], ["う", "u"], ["え", "e"], ["お", "o"],
-        ["か", "ka"], ["き", "ki"], ["く", "ku"], ["け", "ke"], ["こ", "ko"],
-        ["さ", "sa"], ["し", "shi"], ["す", "su"], ["せ", "se"], ["そ", "so"],
-        ["た", "ta"], ["ち", "chi"], ["つ", "tsu"], ["て", "te"], ["と", "to"],
-        ["な", "na"], ["に", "ni"], ["ぬ", "nu"], ["ね", "ne"], ["の", "no"],
-        ["は", "ha"], ["ひ", "hi"], ["ふ", "fu"], ["へ", "he"], ["ほ", "ho"],
-        ["ま", "ma"], ["み", "mi"], ["む", "mu"], ["め", "me"], ["も", "mo"],
-        ["や", "ya"], ["ゆ", "yu"], ["よ", "yo"],
-        ["ら", "ra"], ["り", "ri"], ["る", "ru"], ["れ", "re"], ["ろ", "ro"],
-        ["わ", "wa"], ["を", "wo"], ["ん", "n"]
-    ];
+    // 完整的假名數據
+    const kanaData = {
+        basic: {
+            hiragana: [
+                ["あ","a"],["い","i"],["う","u"],["え","e"],["お","o"],
+                ["か","ka"],["き","ki"],["く","ku"],["け","ke"],["こ","ko"],
+                ["さ","sa"],["し","shi"],["す","su"],["せ","se"],["そ","so"],
+                ["た","ta"],["ち","chi"],["つ","tsu"],["て","te"],["と","to"],
+                ["な","na"],["に","ni"],["ぬ","nu"],["ね","ne"],["の","no"],
+                ["は","ha"],["ひ","hi"],["ふ","fu"],["へ","he"],["ほ","ho"],
+                ["ま","ma"],["み","mi"],["む","mu"],["め","me"],["も","mo"],
+                ["や","ya"],["ゆ","yu"],["よ","yo"],
+                ["ら","ra"],["り","ri"],["る","ru"],["れ","re"],["ろ","ro"],
+                ["わ","wa"],["を","wo"],["ん","n"]
+            ],
+            katakana: [
+                ["ア","a"],["イ","i"],["ウ","u"],["エ","e"],["オ","o"],
+                ["カ","ka"],["キ","ki"],["ク","ku"],["ケ","ke"],["コ","ko"],
+                ["サ","sa"],["シ","shi"],["ス","su"],["セ","se"],["ソ","so"],
+                ["タ","ta"],["チ","chi"],["ツ","tsu"],["テ","te"],["ト","to"],
+                ["ナ","na"],["ニ","ni"],["ヌ","nu"],["ネ","ne"],["ノ","no"],
+                ["ハ","ha"],["ヒ","hi"],["フ","fu"],["ヘ","he"],["ホ","ho"],
+                ["マ","ma"],["ミ","mi"],["ム","mu"],["メ","me"],["モ","mo"],
+                ["ヤ","ya"],["ユ","yu"],["ヨ","yo"],
+                ["ラ","ra"],["リ","ri"],["ル","ru"],["レ","re"],["ロ","ro"],
+                ["ワ","wa"],["ヲ","wo"],["ン","n"]
+            ]
+        },
+        dakuten: {
+            hiragana: [
+                ["が","ga"],["ぎ","gi"],["ぐ","gu"],["げ","ge"],["ご","go"],
+                ["ざ","za"],["じ","ji/zi"],["ず","zu"],["ぜ","ze"],["ぞ","zo"],
+                ["だ","da"],["ぢ","di/ji"],["づ","du/zu"],["で","de"],["ど","do"],
+                ["ば","ba"],["び","bi"],["ぶ","bu"],["べ","be"],["ぼ","bo"]
+            ],
+            katakana: [
+                ["ガ","ga"],["ギ","gi"],["グ","gu"],["ゲ","ge"],["ゴ","go"],
+                ["ザ","za"],["ジ","ji/zi"],["ズ","zu"],["ゼ","ze"],["ゾ","zo"],
+                ["ダ","da"],["ヂ","di/ji"],["ヅ","du/zu"],["デ","de"],["ド","do"],
+                ["バ","ba"],["ビ","bi"],["ブ","bu"],["ベ","be"],["ボ","bo"]
+            ]
+        },
+        handakuten: {
+            hiragana: [
+                ["ぱ","pa"],["ぴ","pi"],["ぷ","pu"],["ぺ","pe"],["ぽ","po"]
+            ],
+            katakana: [
+                ["パ","pa"],["ピ","pi"],["プ","pu"],["ペ","pe"],["ポ","po"]
+            ]
+        },
+        youon: {
+            hiragana: [
+                ["きゃ","kya"],["きゅ","kyu"],["きょ","kyo"],
+                ["しゃ","sha"],["しゅ","shu"],["しょ","sho"],
+                ["ちゃ","cha"],["ちゅ","chu"],["ちょ","cho"],
+                ["にゃ","nya"],["にゅ","nyu"],["にょ","nyo"],
+                ["ひゃ","hya"],["ひゅ","hyu"],["ひょ","hyo"],
+                ["みゃ","mya"],["みゅ","myu"],["みょ","myo"],
+                ["りゃ","rya"],["りゅ","ryu"],["りょ","ryo"],
+                ["ぎゃ","gya"],["ぎゅ","gyu"],["ぎょ","gyo"],
+                ["じゃ","ja"],["じゅ","ju"],["じょ","jo"],
+                ["ぢゃ","dya"],["ぢゅ","dyu"],["ぢょ","dyo"],
+                ["びゃ","bya"],["びゅ","byu"],["びょ","byo"],
+                ["ぴゃ","pya"],["ぴゅ","pyu"],["ぴょ","pyo"]
+            ],
+            katakana: [
+                ["キャ","kya"],["キュ","kyu"],["キョ","kyo"],
+                ["シャ","sha"],["シュ","shu"],["ショ","sho"],
+                ["チャ","cha"],["チュ","chu"],["チョ","cho"],
+                ["ニャ","nya"],["ニュ","nyu"],["ニョ","nyo"],
+                ["ヒャ","hya"],["ヒュ","hyu"],["ヒョ","hyo"],
+                ["ミャ","mya"],["ミュ","myu"],["ミョ","myo"],
+                ["リャ","rya"],["リュ","ryu"],["リョ","ryo"],
+                ["ギャ","gya"],["ギュ","gyu"],["ギョ","gyo"],
+                ["ジャ","ja"],["ジュ","ju"],["ジョ","jo"],
+                ["ヂャ","dya"],["ヂュ","dyu"],["ヂョ","dyo"],
+                ["ビャ","bya"],["ビュ","byu"],["ビョ","byo"],
+                ["ピャ","pya"],["ピュ","pyu"],["ピョ","pyo"]
+            ]
+        }
+    };
 
-    const romajiToKana = Object.fromEntries(chart.map(([k,r]) => [r,k]));
+    // 五十音表數據
+    const chartData = {
+        basic: [
+            ["","a","i","u","e","o"],
+            ["","あ/ア","い/イ","う/ウ","え/エ","お/オ"],
+            ["k","か/カ","き/キ","く/ク","け/ケ","こ/コ"],
+            ["s","さ/サ","し/シ","す/ス","せ/セ","そ/ソ"],
+            ["t","た/タ","ち/チ","つ/ツ","て/テ","と/ト"],
+            ["n","な/ナ","に/ニ","ぬ/ヌ","ね/ネ","の/ノ"],
+            ["h","は/ハ","ひ/ヒ","ふ/フ","へ/ヘ","ほ/ホ"],
+            ["m","ま/マ","み/ミ","む/ム","め/メ","も/モ"],
+            ["y","や/ヤ","","ゆ/ユ","","よ/ヨ"],
+            ["r","ら/ラ","り/リ","る/ル","れ/レ","ろ/ロ"],
+            ["w","わ/ワ","","","","を/ヲ (wo/o)"],
+            ["","","","","","ん/ン"]
+        ],
+        dakuten: [
+            ["","a","i","u","e","o"],
+            ["g","が/ガ","ぎ/ギ","ぐ/グ","げ/ゲ","ご/ゴ"],
+            ["z","ざ/ザ","じ/ジ (ji/zi)","ず/ズ","ぜ/ゼ","ぞ/ゾ"],
+            ["d","だ/ダ","ぢ/ヂ (di/ji)","づ/ヅ (du/zu)","で/デ","ど/ド"],
+            ["b","ば/バ","び/ビ","ぶ/ブ","べ/ベ","ぼ/ボ"]
+        ],
+        handakuten: [
+            ["","a","i","u","e","o"],
+            ["p","ぱ/パ","ぴ/ピ","ぷ/プ","ぺ/ペ","ぽ/ポ"]
+        ]
+    };
 
-    let selected = [], current = 0, score = 0;
-    let lang = "zh";
+    let selected = [], current = 0, score = 0, total = 0, lang = "zh";
 
     const texts = {
         zh: {
-            title: "🌜 日文五十音練習器",
-            instructions: "輸入起始與結束假名（例如：あ 到 こ）：",
+            title: "🎌 日文五十音練習器",
+            navPractice: "練習模式",
+            navChart: "五十音表",
+            typeHiragana: "平假名 (ひらがな)",
+            typeKatakana: "片假名 (カタカナ)",
+            typeMixed: "混合練習",
+            groupBasic: "基本音",
+            groupDakuten: "濁音",
+            groupHandakuten: "半濁音",
+            groupYouon: "拗音",
+            groupSokuon: "促音",
+            groupChouon: "長音",
+            sokuonDesc: "小つ (っ)，發音時停頓一拍<br>例：きっぷ (kippu)、がっこう (gakkou)",
+            chouonDesc: "母音延長，持續兩拍<br>例：おかあさん (okaasan)、コーヒー (koohii)",
+            backBtn: "返回主選單",
+            quizTitle: "練習模式",
+            catBasic: "清音",
+            catDakuten: "濁音 (が,ざ,だ,ば)",
+            catHandakuten: "半濁音 (ぱ行)",
+            catYouon: "拗音 (きゃ,しゃ,ちゃ...)",
+            catSokuon: "促音 (きっぷ,がっこう...)",
+            catChouon: "長音 (おかあさん,コーヒー...)",
+            catBasicKatakana: "清音",
+            catDakutenKatakana: "濁音 (ガ,ザ,ダ,バ)",
+            catHandakutenKatakana: "半濁音 (パ行)",
+            catYouonKatakana: "拗音 (キャ,シャ,チャ...)",
+            catSokuonKatakana: "促音 (チケット,サッカー...)",
+            catChouonKatakana: "長音 (コーヒー,ケーキ...)",
             startBtn: "開始練習",
             submitBtn: "送出",
             correct: "✅ 正確！",
-            wrong: correct => `❌ 錯誤，正確答案是 ${correct}`,
-            score: (score, total) => `🌟 得分：${score} / ${total}`,
-            alert: "⚠️ 假名輸入錯誤，請重新輸入！",
-            inputPlaceholder: "輸入羅馬拼音"
+            wrong: c => `❌ 錯誤，正確答案是 ${c}`,
+            finalScore: (s, t) => `🌟 練習完成！得分：${s} / ${t} (${Math.round(s/t*100)}%)`,
+            alert: "⚠️ 請至少選擇一種練習類型！",
+            statCurrent: "當前題目",
+            statTotal: "總題數",
+            statScore: "正確數",
+            statAccuracy: "正確率",
+            answerPlaceholder: "輸入羅馬拼音"
         },
         en: {
-            title: "🌟 50 Sounds Practice",
-            instructions: "Enter start and end kana (e.g., あ to こ):",
-            startBtn: "Start Quiz",
+            title: "🎌 50 Sounds Practice",
+            navPractice: "Practice Mode",
+            navChart: "Kana Chart",
+            typeHiragana: "Hiragana (ひらがな)",
+            typeKatakana: "Katakana (カタカナ)",
+            typeMixed: "Mixed Practice",
+            groupBasic: "Basic",
+            groupDakuten: "Dakuten",
+            groupHandakuten: "Handakuten",
+            groupYouon: "Youon",
+            groupSokuon: "Sokuon",
+            groupChouon: "Long Vowels",
+            sokuonDesc: "Small tsu (っ), pause for one beat<br>Ex: きっぷ (kippu), がっこう (gakkou)",
+            chouonDesc: "Extended vowels, hold for two beats<br>Ex: おかあさん (okaasan), コーヒー (koohii)",
+            backBtn: "Back to Menu",
+            quizTitle: "Practice Mode",
+            catBasic: "Clear sounds",
+            catDakuten: "Voiced sounds (ga,za,da,ba)",
+            catHandakuten: "Semi-voiced sounds (pa)",
+            catYouon: "Contracted sounds (kya,sha,cha...)",
+            catSokuon: "Double consonants (kippu,gakkou...)",
+            catChouon: "Long vowels (okaasan,koohii...)",
+            catBasicKatakana: "Clear sounds",
+            catDakutenKatakana: "Voiced sounds (GA,ZA,DA,BA)",
+            catHandakutenKatakana: "Semi-voiced sounds (PA)",
+            catYouonKatakana: "Contracted sounds (KYA,SHA,CHA...)",
+            catSokuonKatakana: "Double consonants (chiketto,sakkaa...)",
+            catChouonKatakana: "Long vowels (koohii,keeki...)",
+            startBtn: "Start Practice",
             submitBtn: "Submit",
             correct: "✅ Correct!",
-            wrong: correct => `❌ Incorrect, correct answer: ${correct}`,
-            score: (score, total) => `🌟 Score: ${score} / ${total}`,
-            alert: "⚠️ Invalid kana range!",
-            inputPlaceholder: "Enter romaji"
+            wrong: c => `❌ Incorrect, correct answer: ${c}`,
+            finalScore: (s, t) => `🌟 Practice Complete! Score: ${s} / ${t} (${Math.round(s/t*100)}%)`,
+            alert: "⚠️ Please select at least one practice type!",
+            statCurrent: "Current",
+            statTotal: "Total",
+            statScore: "Correct",
+            statAccuracy: "Accuracy",
+            answerPlaceholder: "Enter romaji"
         }
     };
 
     function setLanguage() {
         lang = document.getElementById("language").value;
         const t = texts[lang];
+        
         document.getElementById("title").innerText = t.title;
-        document.getElementById("instructions").innerText = t.instructions;
-        document.getElementById("startBtn").innerText = t.startBtn;
-        document.getElementById("submitBtn").innerText = t.submitBtn;
-        document.getElementById("answer").placeholder = t.inputPlaceholder;
-        document.getElementById("start").placeholder = lang === 'en' ? 'Start kana (e.g. a)' : '起始假名';
-        document.getElementById("end").placeholder = lang === 'en' ? 'End kana (e.g. ko)' : '結束假名';
-    }
-
-    function normalize(input) {
-        if (chart.find(p => p[0] === input)) return input;
-        return romajiToKana[input.toLowerCase()] || "";
-    }
-
-    function startQuiz() {
-        const startKana = normalize(document.getElementById("start").value.trim());
-        const endKana = normalize(document.getElementById("end").value.trim());
-        const startIndex = chart.findIndex(p => p[0] === startKana);
-        const endIndex = chart.findIndex(p => p[0] === endKana);
-        if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
-            alert(texts[lang].alert);
-            return;
-        }
-        selected = shuffle(chart.slice(startIndex, endIndex + 1));
-        current = 0;
-        score = 0;
-        document.getElementById("quiz").style.display = "block";
-        document.getElementById("feedback").innerText = "";
-        nextQuestion();
-    }
-
-    function nextQuestion() {
-        if (current >= selected.length) {
-            document.getElementById("kana").innerText = texts[lang].score(score, selected.length);
-            document.getElementById("answer").style.display = "none";
-            document.getElementById("submitBtn").style.display = "none";
-            return;
-        }
-        document.getElementById("kana").innerText = selected[current][0];
-        document.getElementById("answer").value = "";
-        document.getElementById("answer").style.display = "inline";
-        document.getElementById("submitBtn").style.display = "inline";
-        document.getElementById("answer").focus();
-    }
-
-    function checkAnswer() {
-        const user = document.getElementById("answer").value.trim().toLowerCase();
-        const correct = selected[current][1];
-        const feedback = document.getElementById("feedback");
-        if (user === correct) {
-            feedback.innerText = texts[lang].correct;
-            score++;
+        
+        // 更新作者信息
+        const authorElement = document.querySelector('p');
+        if (lang === 'zh') {
+            authorElement.innerText = "作者: Ingee";
         } else {
-            feedback.innerText = texts[lang].wrong(correct);
+            authorElement.innerText = "Author: Ingee";
         }
-        current++;
-        setTimeout(() => {
-            feedback.innerText = "";
-            nextQuestion();
-        }, 1000);
+        
+        document.getElementById("nav-practice").innerText = t.navPractice;
+        document.getElementById("nav-chart").innerText = t.navChart;
+        document.getElementById("type-hiragana").innerText = t.typeHiragana;
+        document.getElementById("type-katakana").innerText = t.typeKatakana;
+        document.getElementById("type-mixed").innerText = t.typeMixed;
+        document.getElementById("group-basic").innerText = t.groupBasic;
+        document.getElementById("group-dakuten").innerText = t.groupDakuten;
+        document.getElementById("group-handakuten").innerText = t.groupHandakuten;
+        document.getElementById("group-youon").innerText = t.groupYouon;
+        document.getElementById("group-sokuon").innerText = t.groupSokuon;
+        document.getElementById("group-chouon").innerText = t.groupChouon;
+        document.getElementById("sokuon-desc").innerHTML = t.sokuonDesc;
+        document.getElementById("chouon-desc").innerHTML = t.chouonDesc;
+        document.getElementById("back-btn").innerText = t.backBtn;
+        document.getElementById("quiz-title").innerText = t.quizTitle;
+        document.getElementById("cat-basic").innerText = t.catBasic;
+        document.getElementById("cat-dakuten").innerText = t.catDakuten;
+        document.getElementById("cat-handakuten").innerText = t.catHandakuten;
+        document.getElementById("cat-youon").innerText = t.catYouon;
+        document.getElementById("start-btn").innerText = t.startBtn;
+        document.getElementById("submit-btn").innerText = t.submitBtn;
+        document.getElementById("stat-current").innerText = t.statCurrent;
+        document.getElementById("stat-total").innerText = t.statTotal;
+        document.getElementById("stat-score").innerText = t.statScore;
+        document.getElementById("stat-accuracy").innerText = t.statAccuracy;
+        document.getElementById("answer").placeholder = t.answerPlaceholder;
+        updateChart();
+    }
+
+    function showTab(tabName) {
+        console.log("Showing tab:", tabName);
+        
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+        
+        document.getElementById(tabName + '-tab').classList.add('active');
+        event.target.closest('.nav-tab').classList.add('active');
+        
+        if (tabName === 'chart') {
+            updateChart();
+            console.log("Chart updated");
+        }
+    }
+
+    function updateKanaType() {
+        // 假名類型更新時可以添加邏輯
     }
 
     function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
         }
-        return array;
+        return newArray;
     }
 
-    window.onload = setLanguage;
+    function startQuiz() {
+        console.log("startQuiz called");
+        
+        const kanaTypeEl = document.querySelector('input[name="kana-type"]:checked');
+        if (!kanaTypeEl) {
+            console.log("No kana type selected");
+            return;
+        }
+        
+        const kanaType = kanaTypeEl.value;
+        const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
+        
+        if (categories.length === 0) {
+            alert(texts[lang].alert);
+            return;
+        }
+
+        let kanaList = [];
+        categories.forEach(category => {
+            if (kanaData[category]) {
+                if (kanaType === 'mixed') {
+                    if (kanaData[category].hiragana) kanaList.push(...kanaData[category].hiragana);
+                    if (kanaData[category].katakana) kanaList.push(...kanaData[category].katakana);
+                } else {
+                    if (kanaData[category][kanaType]) kanaList.push(...kanaData[category][kanaType]);
+                }
+            }
+        });
+
+        if (kanaList.length === 0) {
+            console.log("No kana data found");
+            return;
+        }
+
+        selected = shuffle(kanaList);
+        current = 0;
+        score = 0;
+        total = selected.length;
+        
+        // 進入練習模式 - 隱藏主選單內容，顯示練習內容
+        const practiceTab = document.getElementById("practice-tab");
+        const chartTab = document.getElementById("chart-tab");
+        const navTabs = document.querySelector(".nav-tabs");
+        const languageSelect = document.querySelector('div[style*="margin-bottom: 20px"]');
+        
+        console.log("Hiding menu elements...");
+        
+        if (practiceTab) {
+            // 隱藏選項區域
+            const checkboxGrid = practiceTab.querySelector(".checkbox-grid");
+            const modeSelect = practiceTab.querySelector(".mode-select");
+            const startBtn = document.getElementById("start-btn");
+            
+            if (checkboxGrid) {
+                checkboxGrid.style.display = "none";
+                console.log("Checkbox grid hidden");
+            }
+            if (modeSelect) {
+                modeSelect.style.display = "none";
+                console.log("Mode select hidden");
+            }
+            if (startBtn) {
+                startBtn.style.display = "none";
+                console.log("Start button hidden");
+            }
+            if (navTabs) {
+                navTabs.style.display = "none";
+                console.log("Nav tabs hidden");
+            }
+            if (chartTab) {
+                chartTab.style.display = "none";
+                console.log("Chart tab hidden");
+            }
+            if (languageSelect) {
+                languageSelect.style.display = "none";
+                console.log("Language select hidden");
+            }
+            
+            // 創建練習頁面頂部導航
+            let quizHeader = document.getElementById("quiz-header");
+            if (!quizHeader) {
+                console.log("Creating quiz header...");
+                quizHeader = document.createElement("div");
+                quizHeader.id = "quiz-header";
+                quizHeader.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);";
+                
+                const backButton = document.createElement("button");
+                backButton.innerHTML = "← " + texts[lang].backBtn;
+                backButton.style.cssText = "background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;";
+                backButton.onclick = returnToMenu;
+                
+                const title = document.createElement("h2");
+                title.style.cssText = "margin: 0; color: #2c3e50;";
+                title.innerText = texts[lang].quizTitle;
+                
+                const spacer = document.createElement("div");
+                spacer.style.width = "120px";
+                
+                quizHeader.appendChild(backButton);
+                quizHeader.appendChild(title);
+                quizHeader.appendChild(spacer);
+                
+                practiceTab.insertBefore(quizHeader, practiceTab.firstChild);
+                console.log("Quiz header created");
+            }
+            quizHeader.style.display = "flex";
+        }
+        
+        // 強制顯示測驗內容（移到if外面確保執行）
+        console.log("Force showing quiz content...");
+        
+        // 直接在這裡顯示測驗區域
+        const quizArea = document.getElementById("quiz-area");
+        console.log("Direct quiz area check:", quizArea);
+        
+        if (quizArea) {
+            quizArea.style.display = "block";
+            quizArea.style.visibility = "visible";
+            quizArea.style.opacity = "1";
+            quizArea.style.position = "relative";
+            quizArea.style.zIndex = "1000";
+            quizArea.style.backgroundColor = "rgba(255,255,255,0.95)";
+            quizArea.style.padding = "20px";
+            quizArea.style.borderRadius = "10px";
+            quizArea.style.marginTop = "20px";
+            console.log("Quiz area shown directly with enhanced styles");
+        } else {
+            console.log("Quiz area NOT found - creating inline");
+            // 直接創建測驗內容
+            const practiceTab = document.getElementById("practice-tab");
+            if (practiceTab) {
+                const inlineQuiz = document.createElement("div");
+                inlineQuiz.id = "inline-quiz";
+                inlineQuiz.innerHTML = `
+                    <div style="font-size: 72px; margin: 20px; color: #2c3e50; text-align: center;" id="kana"></div>
+                    <div style="text-align: center; margin: 20px;">
+                        <input id="answer" placeholder="輸入羅馬拼音" style="padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; margin: 5px;">
+                        <br><br>
+                        <button onclick="checkAnswer()" id="submit-btn" style="padding: 12px 24px; font-size: 16px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">送出</button>
+                        <div id="feedback" style="font-size: 18px; margin: 20px; font-weight: 500;"></div>
+                        <img src="咖波種子.gif" alt="咖波種子 GIF" style="width:300px; height:auto; margin-top: 20px;">
+                    </div>
+                `;
+                practiceTab.appendChild(inlineQuiz);
+                console.log("Inline quiz created");
+            }
+        }
+        
+        const totalNumEl = document.getElementById("total-num");
+        if (totalNumEl) {
+            totalNumEl.innerText = total;
+            console.log("Total number set to:", total);
+        }
+        
+        console.log("Calling updateStats...");
+        updateStats();
+        console.log("Calling nextQuestion...");
+        nextQuestion();
+        console.log("Quiz started successfully");
+    }
+
+    function showQuizContent() {
+        // 確保所有練習相關的元素都顯示
+        const elementsToShow = [
+            "progress", "current-num", "total-num", "score-num", "accuracy",
+            "stat-current", "stat-total", "stat-score", "stat-accuracy",
+            "kana", "answer", "submit-btn", "feedback"
+        ];
+        
+        elementsToShow.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = "";
+            }
+        });
+        
+        // 確保進度條容器顯示
+        const progressBar = document.querySelector(".progress-bar");
+        if (progressBar) progressBar.style.display = "block";
+        
+        // 確保統計區域顯示
+        const stats = document.querySelector(".stats");
+        if (stats) stats.style.display = "flex";
+        
+        // 確保測驗容器顯示
+        const quizContainer = document.querySelector(".quiz-container");
+        if (quizContainer) quizContainer.style.display = "flex";
+        
+        // 確保咖波種子顯示
+        const kaboImg = document.querySelector('img[alt="咖波種子 GIF"]');
+        if (kaboImg) {
+            kaboImg.style.display = "block";
+        }
+    }
+
+    function returnToMenu() {
+        console.log("Returning to menu...");
+        
+        // 返回主選單 - 顯示主選單內容，隱藏練習內容
+        const practiceTab = document.getElementById("practice-tab");
+        const chartTab = document.getElementById("chart-tab");
+        const navTabs = document.querySelector(".nav-tabs");
+        const languageSelect = document.querySelector('div[style*="margin-bottom: 20px"]');
+        const quizHeader = document.getElementById("quiz-header");
+        
+        if (practiceTab) {
+            // 顯示選項區域
+            const checkboxGrid = practiceTab.querySelector(".checkbox-grid");
+            const modeSelect = practiceTab.querySelector(".mode-select");
+            const startBtn = document.getElementById("start-btn");
+            
+            if (checkboxGrid) {
+                checkboxGrid.style.display = "";
+                console.log("Checkbox grid restored");
+            }
+            if (modeSelect) {
+                modeSelect.style.display = "";
+                console.log("Mode select restored");
+            }
+            if (startBtn) {
+                startBtn.style.display = "";
+                console.log("Start button restored");
+            }
+            if (navTabs) {
+                navTabs.style.display = "";
+                console.log("Nav tabs restored");
+            }
+            if (languageSelect) {
+                languageSelect.style.display = "";
+                console.log("Language select restored");
+            }
+            if (quizHeader) {
+                quizHeader.style.display = "none";
+                console.log("Quiz header hidden");
+            }
+        }
+        
+        // 確保五十音表標籤可以顯示
+        if (chartTab) {
+            chartTab.style.display = "none"; // 初始隱藏，但允許通過標籤切換顯示
+            console.log("Chart tab reset");
+        }
+        
+        // 隱藏測驗內容
+        hideQuizContent();
+        
+        console.log("Returned to main menu");
+    }
+
+    function hideQuizContent() {
+        // 隱藏進度條容器
+        const progressBar = document.querySelector(".progress-bar");
+        if (progressBar) progressBar.style.display = "none";
+        
+        // 隱藏統計區域
+        const stats = document.querySelector(".stats");
+        if (stats) stats.style.display = "none";
+        
+        // 隱藏測驗容器
+        const quizContainer = document.querySelector(".quiz-container");
+        if (quizContainer) quizContainer.style.display = "none";
+        
+        // 隱藏假名顯示
+        const kanaEl = document.getElementById("kana");
+        if (kanaEl) kanaEl.innerText = "";
+        
+        // 隱藏咖波種子
+        const kaboImg = document.querySelector('img[alt="咖波種子 GIF"]');
+        if (kaboImg) {
+            kaboImg.style.display = "none";
+        }
+        
+        // 清除反饋
+        const feedbackEl = document.getElementById("feedback");
+        if (feedbackEl) feedbackEl.innerText = "";
+    }
+
+    function updateStats() {
+        const currentEl = document.getElementById("current-num");
+        const scoreEl = document.getElementById("score-num");
+        const accuracyEl = document.getElementById("accuracy");
+        const progressEl = document.getElementById("progress");
+        
+        if (currentEl) currentEl.innerText = current + 1;
+        if (scoreEl) scoreEl.innerText = score;
+        if (accuracyEl) accuracyEl.innerText = current > 0 ? Math.round(score / current * 100) + "%" : "0%";
+        
+        if (progressEl) {
+            const progress = ((current) / total) * 100;
+            progressEl.style.width = progress + "%";
+        }
+    }
+
+    function nextQuestion() {
+        console.log("nextQuestion called, current:", current, "total:", total);
+        
+        const kanaEl = document.getElementById("kana");
+        const answerEl = document.getElementById("answer");
+        const submitBtnEl = document.getElementById("submit-btn");
+        const feedbackEl = document.getElementById("feedback");
+        
+        console.log("Kana element:", kanaEl);
+        console.log("Answer element:", answerEl);
+        
+        if (current >= selected.length) {
+            if (kanaEl) {
+                kanaEl.innerText = texts[lang].finalScore(score, total);
+                console.log("Final score displayed");
+            }
+            if (answerEl) answerEl.style.display = "none";
+            if (submitBtnEl) submitBtnEl.style.display = "none";
+            if (feedbackEl) feedbackEl.innerText = "";
+            return;
+        }
+        
+        if (kanaEl) {
+            kanaEl.innerText = selected[current][0];
+            console.log("Current kana set to:", selected[current][0]);
+        }
+        if (answerEl) {
+            answerEl.value = "";
+            answerEl.style.display = "inline";
+            setTimeout(() => answerEl.focus(), 100);
+            console.log("Answer input reset and focused");
+        }
+        if (submitBtnEl) submitBtnEl.style.display = "inline";
+        if (feedbackEl) feedbackEl.innerText = "";
+        
+        updateStats();
+    }
+
+    function checkAnswer() {
+        const answerEl = document.getElementById("answer");
+        const feedbackEl = document.getElementById("feedback");
+        
+        if (!answerEl || !feedbackEl) return;
+        
+        const user = answerEl.value.trim().toLowerCase();
+        const char = selected[current][0];
+        const correctAnswers = selected[current][1];
+        
+        // 處理多種讀音的情況
+        let acceptableAnswers = [];
+        if (correctAnswers.includes('/')) {
+            acceptableAnswers = correctAnswers.split('/');
+        } else {
+            acceptableAnswers = [correctAnswers];
+        }
+        
+        // 特殊情況處理
+        if (char === "を" || char === "ヲ") {
+            acceptableAnswers = ["wo", "o"];
+        }
+        if (char === "ぢ" || char === "ヂ") {
+            acceptableAnswers = ["di", "ji"];
+        }
+        if (char === "づ" || char === "ヅ") {
+            acceptableAnswers = ["du", "zu"];
+        }
+        if (char === "じ" || char === "ジ") {
+            acceptableAnswers = ["ji", "zi"];
+        }
+        
+        if (acceptableAnswers.includes(user)) {
+            feedbackEl.innerText = texts[lang].correct;
+            feedbackEl.style.color = "#27ae60";
+            score++;
+        } else {
+            const answerDisplay = acceptableAnswers.length > 1 ? 
+                acceptableAnswers.join(' / ') : acceptableAnswers[0];
+            feedbackEl.innerText = texts[lang].wrong(answerDisplay);
+            feedbackEl.style.color = "#e74c3c";
+        }
+        
+        current++;
+        setTimeout(nextQuestion, 1500);
+    }
+
+    function updateChart() {
+        console.log("updateChart called");
+        
+        const chartType = document.querySelector('input[name="chart-type"]:checked');
+        if (!chartType) {
+            console.log("No chart type selected, defaulting to hiragana");
+            // 如果找不到選中的類型，默認為平假名
+            const hiraganaRadio = document.querySelector('input[name="chart-type"][value="hiragana"]');
+            if (hiraganaRadio) hiraganaRadio.checked = true;
+        }
+        
+        const selectedType = chartType ? chartType.value : 'hiragana';
+        console.log("Chart type:", selectedType);
+        
+        const chartContainer = document.getElementById("kana-chart");
+        console.log("Chart container:", chartContainer);
+        
+        if (!chartContainer) {
+            console.log("Chart container not found!");
+            return;
+        }
+        
+        let html = "";
+        
+        // 基本音表
+        html += "<h3>清音</h3>";
+        html += createChartTable(chartData.basic, selectedType);
+        
+        // 濁音表
+        html += "<h3>濁音</h3>";
+        html += createChartTable(chartData.dakuten, selectedType);
+        
+        // 半濁音表
+        html += "<h3>半濁音</h3>";
+        html += createChartTable(chartData.handakuten, selectedType);
+        
+        // 拗音表
+        html += "<h3>拗音</h3>";
+        html += createYouonTable(selectedType);
+        
+        console.log("Generated HTML length:", html.length);
+        console.log("HTML preview:", html.substring(0, 200) + "...");
+        
+        chartContainer.innerHTML = html;
+        console.log("Chart container updated");
+    }
+
+    function createChartTable(data, type) {
+        console.log("createChartTable called with type:", type);
+        console.log("Data:", data);
+        
+        let html = '<table class="chart-table" style="width: 100%; border-collapse: collapse; margin: 20px 0; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">';
+        
+        data.forEach((row, index) => {
+            html += '<tr>';
+            row.forEach((cell, cellIndex) => {
+                const cellStyle = index === 0 ? 
+                    'style="padding: 12px; text-align: center; border: 1px solid #e9ecef; background: #667eea; color: white; font-weight: 600;"' :
+                    'style="padding: 12px; text-align: center; border: 1px solid #e9ecef; font-size: 18px;"';
+                
+                if (index === 0) {
+                    html += `<th ${cellStyle}>${cell}</th>`;
+                } else {
+                    if (cellIndex === 0) {
+                        html += `<th ${cellStyle}>${cell}</th>`;
+                    } else {
+                        if (cell === "") {
+                            html += '<td style="padding: 12px; text-align: center; border: 1px solid #e9ecef;"></td>';
+                        } else {
+                            // 檢查是否包含括號（多種讀音）
+                            if (cell.includes('(')) {
+                                // 有括號的情況，直接顯示
+                                const kanaChars = cell.split(' (')[0].split('/');
+                                const displayChar = type === 'hiragana' ? kanaChars[0] : kanaChars[1];
+                                const romajiPart = cell.split(' (')[1].replace(')', '');
+                                html += `<td style="padding: 12px; text-align: center; border: 1px solid #e9ecef;">
+                                    <div style="font-size: 24px; font-weight: bold; color: #2c3e50;">${displayChar}</div>
+                                    <div style="font-size: 14px; color: #666; font-family: monospace;">${romajiPart}</div>
+                                </td>`;
+                            } else {
+                                // 普通情況，查找羅馬字
+                                const kanaChars = cell.split('/');
+                                const displayChar = type === 'hiragana' ? kanaChars[0] : kanaChars[1];
+                                const romaji = getRomajiForKana(displayChar);
+                                html += `<td style="padding: 12px; text-align: center; border: 1px solid #e9ecef;">
+                                    <div style="font-size: 24px; font-weight: bold; color: #2c3e50;">${displayChar}</div>
+                                    <div style="font-size: 14px; color: #666; font-family: monospace;">${romaji}</div>
+                                </td>`;
+                            }
+                        }
+                    }
+                }
+            });
+            html += '</tr>';
+        });
+        
+        html += '</table>';
+        console.log("Generated table HTML length:", html.length);
+        return html;
+    }
+
+    function createYouonTable(type) {
+        const youonGroups = [
+            {name: "きゃ行", kana: ["きゃ/キャ", "きゅ/キュ", "きょ/キョ"], romaji: ["kya", "kyu", "kyo"]},
+            {name: "しゃ行", kana: ["しゃ/シャ", "しゅ/シュ", "しょ/ショ"], romaji: ["sha", "shu", "sho"]},
+            {name: "ちゃ行", kana: ["ちゃ/チャ", "ちゅ/チュ", "ちょ/チョ"], romaji: ["cha", "chu", "cho"]},
+            {name: "にゃ行", kana: ["にゃ/ニャ", "にゅ/ニュ", "にょ/ニョ"], romaji: ["nya", "nyu", "nyo"]},
+            {name: "ひゃ行", kana: ["ひゃ/ヒャ", "ひゅ/ヒュ", "ひょ/ヒョ"], romaji: ["hya", "hyu", "hyo"]},
+            {name: "みゃ行", kana: ["みゃ/ミャ", "みゅ/ミュ", "みょ/ミョ"], romaji: ["mya", "myu", "myo"]},
+            {name: "りゃ行", kana: ["りゃ/リャ", "りゅ/リュ", "りょ/リョ"], romaji: ["rya", "ryu", "ryo"]},
+            {name: "ぎゃ行", kana: ["ぎゃ/ギャ", "ぎゅ/ギュ", "ぎょ/ギョ"], romaji: ["gya", "gyu", "gyo"]},
+            {name: "じゃ行", kana: ["じゃ/ジャ", "じゅ/ジュ", "じょ/ジョ"], romaji: ["ja", "ju", "jo"]},
+            {name: "びゃ行", kana: ["びゃ/ビャ", "びゅ/ビュ", "びょ/ビョ"], romaji: ["bya", "byu", "byo"]},
+            {name: "ぴゃ行", kana: ["ぴゃ/ピャ", "ぴゅ/ピュ", "ぴょ/ピョ"], romaji: ["pya", "pyu", "pyo"]}
+        ];
+
+        let html = '<table class="chart-table">';
+        html += '<tr><th>行</th><th>や段</th><th>ゆ段</th><th>よ段</th></tr>';
+        
+        youonGroups.forEach(group => {
+            html += '<tr>';
+            html += `<th>${group.name}</th>`;
+            group.kana.forEach((kana, index) => {
+                const kanaChars = kana.split('/');
+                const displayChar = type === 'hiragana' ? kanaChars[0] : kanaChars[1];
+                html += `<td>
+                    <div class="kana-char">${displayChar}</div>
+                    <div class="romaji">${group.romaji[index]}</div>
+                </td>`;
+            });
+            html += '</tr>';
+        });
+        
+        html += '</table>';
+        return html;
+    }
+
+    function getRomajiForKana(kana) {
+        // 查找假名對應的羅馬字
+        for (const category in kanaData) {
+            for (const type in kanaData[category]) {
+                const found = kanaData[category][type].find(item => item[0] === kana);
+                if (found) return found[1];
+            }
+        }
+        return "";
+    }
+
+    // 初始化
+    function initializePage() {
+        setLanguage();
+        updateChart();
+        
+        // 確保事件監聽器正確綁定
+        const startBtn = document.getElementById("start-btn");
+        if (startBtn) {
+            startBtn.onclick = startQuiz;
+        }
+        
+        console.log("Page initialized"); // 調試信息
+    }
+    
+    // 當頁面加載完成時初始化
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializePage);
+    } else {
+        initializePage();
+    }
     </script>
 </body>
 </html>
