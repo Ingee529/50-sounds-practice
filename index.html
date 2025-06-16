@@ -925,8 +925,74 @@
         }
     }
 
-    function returnToMenu() {
-        console.log("Returning to menu...");
+ function returnToMenu() {
+    console.log("Returning to menu...");
+
+    // 重置狀態變數
+    selected = [];
+    current = 0;
+    score = 0;
+    total = 0;
+
+    // 還原主選單顯示
+    const practiceTab = document.getElementById("practice-tab");
+    const chartTab = document.getElementById("chart-tab");
+    const navTabs = document.querySelector(".nav-tabs");
+    const languageSelect = document.querySelector('div[style*="margin-bottom: 20px"]');
+    const quizHeader = document.getElementById("quiz-header");
+
+    if (practiceTab) {
+        const checkboxGrid = practiceTab.querySelector(".checkbox-grid");
+        const modeSelect = practiceTab.querySelector(".mode-select");
+        const startBtn = document.getElementById("start-btn");
+
+        if (checkboxGrid) checkboxGrid.style.display = "";
+        if (modeSelect) modeSelect.style.display = "";
+        if (startBtn) startBtn.style.display = "";
+
+        if (navTabs) navTabs.style.display = "";
+        if (languageSelect) languageSelect.style.display = "";
+
+        if (quizHeader) quizHeader.style.display = "none";
+    }
+
+    // 清除測驗區域
+    const quizArea = document.getElementById("quiz-area");
+    if (quizArea) {
+        quizArea.style.display = "none";
+        quizArea.style.visibility = "hidden";
+        quizArea.style.opacity = "0";
+        quizArea.style.zIndex = "-1";
+        quizArea.style.position = "absolute";
+
+        const kanaEl = document.getElementById("kana");
+        const feedbackEl = document.getElementById("feedback");
+        const answerEl = document.getElementById("answer");
+
+        if (kanaEl) kanaEl.innerText = "";
+        if (feedbackEl) feedbackEl.innerText = "";
+        if (answerEl) {
+            answerEl.value = "";
+            answerEl.style.display = "inline";
+        }
+
+        const submitBtn = document.getElementById("submit-btn");
+        if (submitBtn) submitBtn.style.display = "inline";
+
+        // 重設統計
+        document.getElementById("score-num").innerText = "0";
+        document.getElementById("current-num").innerText = "1";
+        document.getElementById("total-num").innerText = "0";
+        document.getElementById("accuracy").innerText = "0%";
+        document.getElementById("progress").style.width = "0%";
+    }
+
+    // 保險地重新綁定按鈕
+    const startBtn = document.getElementById("start-btn");
+    if (startBtn) startBtn.onclick = startQuiz;
+
+    console.log("Returned to main menu");
+}
         
         // 返回主選單 - 顯示主選單內容，隱藏練習內容
         const practiceTab = document.getElementById("practice-tab");
