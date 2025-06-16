@@ -387,11 +387,11 @@
             <div class="mode-select">
                 <label>
                     <input type="radio" name="chart-type" value="hiragana" checked onchange="updateChart()">
-                    <span>平假名</span>
+                    <span id="chart-hiragana-label">平假名</span>
                 </label>
                 <label>
                     <input type="radio" name="chart-type" value="katakana" onchange="updateChart()">
-                    <span>片假名</span>
+                    <span id="chart-katakana-label">片假名</span>
                 </label>
             </div>
             <div id="kana-chart"></div>
@@ -572,7 +572,9 @@
             statTotal: "總題數",
             statScore: "正確數",
             statAccuracy: "正確率",
-            answerPlaceholder: "輸入羅馬拼音"
+            answerPlaceholder: "輸入羅馬拼音",
+            chartHiragana: "平假名",
+            chartKatakana: "片假名"
         },
         en: {
             title: "🎌 50 Sounds Practice",
@@ -582,8 +584,8 @@
             typeKatakana: "Katakana (カタカナ)",
             typeMixed: "Mixed Practice",
             groupBasic: "Basic",
-            groupDakuten: "Dakuten",
-            groupHandakuten: "Handakuten",
+            groupDakuten: "Dakuon",
+            groupHandakuten: "Handakuon",
             groupYouon: "Youon",
             groupSokuon: "Sokuon",
             groupChouon: "Long Vowels",
@@ -613,7 +615,9 @@
             statTotal: "Total",
             statScore: "Correct",
             statAccuracy: "Accuracy",
-            answerPlaceholder: "Enter romaji"
+            answerPlaceholder: "Enter romaji",
+            chartHiragana: "Hiragana",
+            chartKatakana: "Katakana"
         }
     };
 
@@ -644,12 +648,15 @@
         document.getElementById("group-chouon").innerText = t.groupChouon;
         document.getElementById("sokuon-desc").innerHTML = t.sokuonDesc;
         document.getElementById("chouon-desc").innerHTML = t.chouonDesc;
-        document.getElementById("back-btn").innerText = t.backBtn;
-        document.getElementById("quiz-title").innerText = t.quizTitle;
+        const backBtnEl = document.getElementById("back-btn");
+        if (backBtnEl) backBtnEl.innerText = t.backBtn;
+        const quizTitleEl = document.getElementById("quiz-title");
+        if (quizTitleEl) quizTitleEl.innerText = t.quizTitle;
         document.getElementById("cat-basic").innerText = t.catBasic;
         document.getElementById("cat-dakuten").innerText = t.catDakuten;
         document.getElementById("cat-handakuten").innerText = t.catHandakuten;
         document.getElementById("cat-youon").innerText = t.catYouon;
+        // Move start and submit button updates here
         document.getElementById("start-btn").innerText = t.startBtn;
         document.getElementById("submit-btn").innerText = t.submitBtn;
         document.getElementById("stat-current").innerText = t.statCurrent;
@@ -657,12 +664,12 @@
         document.getElementById("stat-score").innerText = t.statScore;
         document.getElementById("stat-accuracy").innerText = t.statAccuracy;
         document.getElementById("answer").placeholder = t.answerPlaceholder;
+        // Update chart tab labels
+        const chartHiraEl = document.getElementById("chart-hiragana-label");
+        if (chartHiraEl) chartHiraEl.innerText = t.chartHiragana;
+        const chartKataEl = document.getElementById("chart-katakana-label");
+        if (chartKataEl) chartKataEl.innerText = t.chartKatakana;
         updateChart();
-
-        const startBtn = document.getElementById("start-btn");
-        if (startBtn) {
-            startBtn.innerText = t.startBtn;
-        }
     }
 
     function showTab(tabName) {
