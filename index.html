@@ -248,7 +248,7 @@
         <!-- 語言選擇 -->
         <div style="margin-bottom: 20px;">
             <label for="language">🌐 語言 Language:</label>
-            <select id="language" onchange="setLanguage()">
+            <select id="language">
                 <option value="zh">繁體中文</option>
                 <option value="en">English</option>
             </select>
@@ -256,10 +256,10 @@
 
         <!-- 導航標籤 -->
         <div class="nav-tabs">
-            <div class="nav-tab active" onclick="showTab('practice')">
+            <div class="nav-tab active" data-tab="practice">
                 <span id="nav-practice">練習模式</span>
             </div>
-            <div class="nav-tab" onclick="showTab('chart')">
+            <div class="nav-tab" data-tab="chart">
                 <span id="nav-chart">五十音表</span>
             </div>
         </div>
@@ -269,27 +269,15 @@
             <!-- 假名類型選擇 -->
             <div class="mode-select">
                 <label>
-                    <input type="radio" name="kana-type" value="hiragana" checked                     onclick="
-                        document.getElementById('cat-dakuten').textContent = '濁音 (が,ざ,だ,ば)';
-                        document.getElementById('cat-handakuten').textContent = '半濁音 (ぱ行)';
-                        document.getElementById('cat-youon').textContent = '拗音 (きゃ,しゃ,ちゃ...)';
-                    ">
+                    <input type="radio" name="kana-type" value="hiragana" checked>
                     <span id="type-hiragana">平假名 (ひらがな)</span>
                 </label>
                 <label>
-                    <input type="radio" name="kana-type" value="katakana"                     onclick="
-                        document.getElementById('cat-dakuten').textContent = '濁音 (ガ,ザ,ダ,バ)';
-                        document.getElementById('cat-handakuten').textContent = '半濁音 (パ行)';
-                        document.getElementById('cat-youon').textContent = '拗音 (キャ,シャ,チャ...)';
-                    ">
+                    <input type="radio" name="kana-type" value="katakana">
                     <span id="type-katakana">片假名 (カタカナ)</span>
                 </label>
                 <label>
-                    <input type="radio" name="kana-type" value="mixed"                     onclick="
-                        document.getElementById('cat-dakuten').textContent = '濁音 (が,ざ,だ,ば)';
-                        document.getElementById('cat-handakuten').textContent = '半濁音 (ぱ行)';
-                        document.getElementById('cat-youon').textContent = '拗音 (きゃ,しゃ,ちゃ...)';
-                    ">
+                    <input type="radio" name="kana-type" value="mixed">
                     <span id="type-mixed">混合練習</span>
                 </label>
             </div>
@@ -313,49 +301,11 @@
                     <label><input type="checkbox" name="category" value="youon"> <span id="cat-youon">拗音 (きゃ,しゃ,ちゃ...)</span></label>
                 </div>
             </div>
-            </div>
 
-                            <button id="start-btn" onclick="startQuiz()">開始練習</button>
+            <button id="start-btn">開始練習</button>
 
-                <!-- 測驗區域 -->
-                <div id="quiz-area" style="display: none;">
-                    <!-- 進度條 -->
-                    <div class="progress-bar" style="width: 100%; height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden; margin: 10px 0;">
-                        <div class="progress-fill" id="progress" style="height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.5s ease; border-radius: 4px; width: 0%;"></div>
-                    </div>
-                    
-                    <!-- 統計資訊 -->
-                    <div class="stats" style="display: flex; justify-content: space-around; margin: 20px 0; flex-wrap: wrap;">
-                        <div class="stat-item" style="background: #f8f9fa; padding: 15px; border-radius: 10px; min-width: 120px; margin: 5px;">
-                            <div class="stat-number" id="current-num" style="font-size: 24px; font-weight: bold; color: #667eea;">1</div>
-                            <div class="stat-label" id="stat-current" style="font-size: 14px; color: #666;">當前題目</div>
-                        </div>
-                        <div class="stat-item" style="background: #f8f9fa; padding: 15px; border-radius: 10px; min-width: 120px; margin: 5px;">
-                            <div class="stat-number" id="total-num" style="font-size: 24px; font-weight: bold; color: #667eea;">0</div>
-                            <div class="stat-label" id="stat-total" style="font-size: 14px; color: #666;">總題數</div>
-                        </div>
-                        <div class="stat-item" style="background: #f8f9fa; padding: 15px; border-radius: 10px; min-width: 120px; margin: 5px;">
-                            <div class="stat-number" id="score-num" style="font-size: 24px; font-weight: bold; color: #667eea;">0</div>
-                            <div class="stat-label" id="stat-score" style="font-size: 14px; color: #666;">正確數</div>
-                        </div>
-                        <div class="stat-item" style="background: #f8f9fa; padding: 15px; border-radius: 10px; min-width: 120px; margin: 5px;">
-                            <div class="stat-number" id="accuracy" style="font-size: 24px; font-weight: bold; color: #667eea;">0%</div>
-                            <div class="stat-label" id="stat-accuracy" style="font-size: 14px; color: #666;">正確率</div>
-                        </div>
-                    </div>
-
-                    <!-- 測驗區 -->
-                    <div class="quiz-container" style="display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 30px; flex-direction: column;">
-                        <div class="kana" id="kana" style="font-size: 72px; margin: 20px; color: #2c3e50; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);"></div>
-                        <input id="answer" placeholder="輸入羅馬拼音" onkeydown="if(event.key==='Enter') checkAnswer()" style="padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; margin: 5px;">
-                        <button onclick="checkAnswer()" id="submit-btn" style="padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; margin: 5px; background: #667eea; color: white; border: none; cursor: pointer;">送出</button>
-                        <div class="result" id="feedback" style="font-size: 18px; margin-top: 20px; font-weight: 500;"></div>
-                        <img src="咖波種子.gif" alt="咖波種子 GIF" style="width:300px; height:auto; margin-top: 20px;">
-                    </div>
-                </div>
-
-            <!-- 測驗區 -->
-            <div id="quiz" style="display:none;">
+            <!-- 測驗區域 -->
+            <div id="quiz-area" style="display: none;">
                 <!-- 進度條 -->
                 <div class="progress-bar">
                     <div class="progress-fill" id="progress"></div>
@@ -381,10 +331,11 @@
                     </div>
                 </div>
 
-                <div class="quiz-container" style="flex-direction: column;">
+                <!-- 測驗區 -->
+                <div class="quiz-container">
                     <div class="kana" id="kana"></div>
-                    <input id="answer" placeholder="輸入羅馬拼音" onkeydown="if(event.key==='Enter') checkAnswer()">
-                    <button onclick="checkAnswer()" id="submit-btn">送出</button>
+                    <input id="answer" placeholder="輸入羅馬拼音">
+                    <button id="submit-btn">送出</button>
                     <div class="result" id="feedback"></div>
                     <img src="咖波種子.gif" alt="咖波種子 GIF" style="width:300px; height:auto; margin-top: 20px;">
                 </div>
@@ -395,11 +346,11 @@
         <div id="chart-tab" class="tab-content">
             <div class="mode-select">
                 <label>
-                    <input type="radio" name="chart-type" value="hiragana" checked onchange="updateChart()">
+                    <input type="radio" name="chart-type" value="hiragana" checked>
                     <span id="chart-hiragana-label">平假名</span>
                 </label>
                 <label>
-                    <input type="radio" name="chart-type" value="katakana" onchange="updateChart()">
+                    <input type="radio" name="chart-type" value="katakana">
                     <span id="chart-katakana-label">片假名</span>
                 </label>
             </div>
@@ -631,57 +582,128 @@
     };
 
     function setLanguage() {
+        console.log("setLanguage called");
         lang = document.getElementById("language").value;
+        console.log("Language set to:", lang);
         const t = texts[lang];
         
-        document.getElementById("title").innerText = t.title;
-        
-        // 更新作者信息
-        const authorElement = document.querySelector('p');
-        if (lang === 'zh') {
-            authorElement.innerText = "作者: Ingee";
-        } else {
-            authorElement.innerText = "Author: Ingee";
+        try {
+            document.getElementById("title").innerText = t.title;
+            
+            // 更新作者信息
+            const authorElement = document.querySelector('p');
+            if (authorElement) {
+                if (lang === 'zh') {
+                    authorElement.innerText = "作者: Ingee";
+                } else {
+                    authorElement.innerText = "Author: Ingee";
+                }
+            }
+            
+            // 更新導航標籤
+            const navPracticeEl = document.getElementById("nav-practice");
+            if (navPracticeEl) navPracticeEl.innerText = t.navPractice;
+            
+            const navChartEl = document.getElementById("nav-chart");
+            if (navChartEl) navChartEl.innerText = t.navChart;
+            
+            // 更新假名類型標籤
+            const typeHiraganaEl = document.getElementById("type-hiragana");
+            if (typeHiraganaEl) typeHiraganaEl.innerText = t.typeHiragana;
+            
+            const typeKatakanaEl = document.getElementById("type-katakana");
+            if (typeKatakanaEl) typeKatakanaEl.innerText = t.typeKatakana;
+            
+            const typeMixedEl = document.getElementById("type-mixed");
+            if (typeMixedEl) typeMixedEl.innerText = t.typeMixed;
+            
+            // 更新分組標籤
+            const groupBasicEl = document.getElementById("group-basic");
+            if (groupBasicEl) groupBasicEl.innerText = t.groupBasic;
+            
+            const groupDakutenEl = document.getElementById("group-dakuten");
+            if (groupDakutenEl) groupDakutenEl.innerText = t.groupDakuten;
+            
+            const groupHandakutenEl = document.getElementById("group-handakuten");
+            if (groupHandakutenEl) groupHandakutenEl.innerText = t.groupHandakuten;
+            
+            const groupYouonEl = document.getElementById("group-youon");
+            if (groupYouonEl) groupYouonEl.innerText = t.groupYouon;
+            
+            const groupSokuonEl = document.getElementById("group-sokuon");
+            if (groupSokuonEl) groupSokuonEl.innerText = t.groupSokuon;
+            
+            const groupChouonEl = document.getElementById("group-chouon");
+            if (groupChouonEl) groupChouonEl.innerText = t.groupChouon;
+            
+            // 更新描述文字
+            const sokuonDescEl = document.getElementById("sokuon-desc");
+            if (sokuonDescEl) sokuonDescEl.innerHTML = t.sokuonDesc;
+            
+            const chouonDescEl = document.getElementById("chouon-desc");
+            if (chouonDescEl) chouonDescEl.innerHTML = t.chouonDesc;
+            
+            // 更新按鈕文字
+            const backBtnEl = document.getElementById("back-btn");
+            if (backBtnEl) backBtnEl.innerText = t.backBtn;
+            
+            const quizTitleEl = document.getElementById("quiz-title");
+            if (quizTitleEl) quizTitleEl.innerText = t.quizTitle;
+            
+            // 更新類別標籤
+            const catBasicEl = document.getElementById("cat-basic");
+            if (catBasicEl) catBasicEl.innerText = t.catBasic;
+            
+            const catDakutenEl = document.getElementById("cat-dakuten");
+            if (catDakutenEl) catDakutenEl.innerText = t.catDakuten;
+            
+            const catHandakutenEl = document.getElementById("cat-handakuten");
+            if (catHandakutenEl) catHandakutenEl.innerText = t.catHandakuten;
+            
+            const catYouonEl = document.getElementById("cat-youon");
+            if (catYouonEl) catYouonEl.innerText = t.catYouon;
+            
+            // 更新按鈕
+            const startBtnEl = document.getElementById("start-btn");
+            if (startBtnEl) startBtnEl.innerText = t.startBtn;
+            
+            const submitBtnEl = document.getElementById("submit-btn");
+            if (submitBtnEl) submitBtnEl.innerText = t.submitBtn;
+            
+            // 更新統計標籤
+            const statCurrentEl = document.getElementById("stat-current");
+            if (statCurrentEl) statCurrentEl.innerText = t.statCurrent;
+            
+            const statTotalEl = document.getElementById("stat-total");
+            if (statTotalEl) statTotalEl.innerText = t.statTotal;
+            
+            const statScoreEl = document.getElementById("stat-score");
+            if (statScoreEl) statScoreEl.innerText = t.statScore;
+            
+            const statAccuracyEl = document.getElementById("stat-accuracy");
+            if (statAccuracyEl) statAccuracyEl.innerText = t.statAccuracy;
+            
+            // 更新輸入框佔位符
+            const answerEl = document.getElementById("answer");
+            if (answerEl) answerEl.placeholder = t.answerPlaceholder;
+            
+            // 更新五十音表標籤
+            const chartHiraEl = document.getElementById("chart-hiragana-label");
+            if (chartHiraEl) chartHiraEl.innerText = t.chartHiragana;
+            
+            const chartKataEl = document.getElementById("chart-katakana-label");
+            if (chartKataEl) chartKataEl.innerText = t.chartKatakana;
+            
+            console.log("Language updated successfully");
+            updateChart();
+        } catch (error) {
+            console.error("Error in setLanguage:", error);
         }
-        
-        document.getElementById("nav-practice").innerText = t.navPractice;
-        document.getElementById("nav-chart").innerText = t.navChart;
-        document.getElementById("type-hiragana").innerText = t.typeHiragana;
-        document.getElementById("type-katakana").innerText = t.typeKatakana;
-        document.getElementById("type-mixed").innerText = t.typeMixed;
-        document.getElementById("group-basic").innerText = t.groupBasic;
-        document.getElementById("group-dakuten").innerText = t.groupDakuten;
-        document.getElementById("group-handakuten").innerText = t.groupHandakuten;
-        document.getElementById("group-youon").innerText = t.groupYouon;
-        document.getElementById("group-sokuon").innerText = t.groupSokuon;
-        document.getElementById("group-chouon").innerText = t.groupChouon;
-        document.getElementById("sokuon-desc").innerHTML = t.sokuonDesc;
-        document.getElementById("chouon-desc").innerHTML = t.chouonDesc;
-        const backBtnEl = document.getElementById("back-btn");
-        if (backBtnEl) backBtnEl.innerText = t.backBtn;
-        const quizTitleEl = document.getElementById("quiz-title");
-        if (quizTitleEl) quizTitleEl.innerText = t.quizTitle;
-        document.getElementById("cat-basic").innerText = t.catBasic;
-        document.getElementById("cat-dakuten").innerText = t.catDakuten;
-        document.getElementById("cat-handakuten").innerText = t.catHandakuten;
-        document.getElementById("cat-youon").innerText = t.catYouon;
-        // Move start and submit button updates here
-        document.getElementById("start-btn").innerText = t.startBtn;
-        document.getElementById("submit-btn").innerText = t.submitBtn;
-        document.getElementById("stat-current").innerText = t.statCurrent;
-        document.getElementById("stat-total").innerText = t.statTotal;
-        document.getElementById("stat-score").innerText = t.statScore;
-        document.getElementById("stat-accuracy").innerText = t.statAccuracy;
-        document.getElementById("answer").placeholder = t.answerPlaceholder;
-        // Update chart tab labels
-        const chartHiraEl = document.getElementById("chart-hiragana-label");
-        if (chartHiraEl) chartHiraEl.innerText = t.chartHiragana;
-        const chartKataEl = document.getElementById("chart-katakana-label");
-        if (chartKataEl) chartKataEl.innerText = t.chartKatakana;
-        updateChart();
     }
 
     function showTab(tabName) {
+        console.log("showTab called with:", tabName);
+        
         // 先隱藏所有 tab-content
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.classList.remove('active');
@@ -695,10 +717,16 @@
         if (currentTab) {
             currentTab.classList.add('active');
             currentTab.style.display = 'block';
+            console.log("Tab displayed:", tabName);
+        } else {
+            console.log("Tab not found:", tabName + '-tab');
         }
+        
         // 對應 nav-tab 加 active
-        if (event && event.target) {
-            event.target.closest('.nav-tab').classList.add('active');
+        const activeNavTab = document.querySelector(`.nav-tab[data-tab="${tabName}"]`);
+        if (activeNavTab) {
+            activeNavTab.classList.add('active');
+            console.log("Nav tab activated:", tabName);
         }
 
         // 控制「開始練習」按鈕顯示
@@ -707,8 +735,10 @@
             if (tabName === 'practice') {
                 startBtn.style.display = "";
                 startBtn.innerText = texts[lang].startBtn;
+                console.log("Start button shown");
             } else {
                 startBtn.style.display = "none";
+                console.log("Start button hidden");
             }
         }
 
@@ -734,172 +764,218 @@
     function startQuiz() {
         console.log("startQuiz called");
         
-        // 清理之前的練習狀態
-        const existingQuizArea = document.getElementById("quiz-area");
-        if (existingQuizArea) {
-            existingQuizArea.style.display = "none";
-        }
-        const inlineQuiz = document.getElementById("inline-quiz");
-        if (inlineQuiz) {
-            inlineQuiz.remove();
-        }
-        const existingQuizHeader = document.getElementById("quiz-header");
-        if (existingQuizHeader) {
-            existingQuizHeader.remove();
-        }
-        
-        const kanaTypeEl = document.querySelector('input[name="kana-type"]:checked');
-        if (!kanaTypeEl) {
-            console.log("No kana type selected");
-            return;
-        }
-        
-        const kanaType = kanaTypeEl.value;
-        const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
-        
-        if (categories.length === 0) {
-            alert(texts[lang].alert);
-            return;
-        }
+        try {
+            // 清理之前的練習狀態
+            const existingQuizArea = document.getElementById("quiz-area");
+            if (existingQuizArea) {
+                existingQuizArea.style.display = "none";
+            }
+            const inlineQuiz = document.getElementById("inline-quiz");
+            if (inlineQuiz) {
+                inlineQuiz.remove();
+            }
+            const existingQuizHeader = document.getElementById("quiz-header");
+            if (existingQuizHeader) {
+                existingQuizHeader.remove();
+            }
+            
+            const kanaTypeEl = document.querySelector('input[name="kana-type"]:checked');
+            if (!kanaTypeEl) {
+                console.log("No kana type selected");
+                return;
+            }
+            
+            const kanaType = kanaTypeEl.value;
+            // 安全性改進：驗證 kanaType 值
+            if (!['hiragana', 'katakana', 'mixed'].includes(kanaType)) {
+                console.error("Invalid kana type:", kanaType);
+                return;
+            }
+            
+            const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
+            
+            if (categories.length === 0) {
+                alert(texts[lang].alert);
+                return;
+            }
 
-        let kanaList = [];
-        categories.forEach(category => {
-            if (kanaData[category]) {
-                if (kanaType === 'mixed') {
-                    if (kanaData[category].hiragana) kanaList.push(...kanaData[category].hiragana);
-                    if (kanaData[category].katakana) kanaList.push(...kanaData[category].katakana);
-                } else {
-                    if (kanaData[category][kanaType]) kanaList.push(...kanaData[category][kanaType]);
+            let kanaList = [];
+            categories.forEach(category => {
+                // 安全性改進：驗證 category 值
+                if (kanaData[category] && ['basic', 'dakuten', 'handakuten', 'youon'].includes(category)) {
+                    if (kanaType === 'mixed') {
+                        if (kanaData[category].hiragana) kanaList.push(...kanaData[category].hiragana);
+                        if (kanaData[category].katakana) kanaList.push(...kanaData[category].katakana);
+                    } else {
+                        if (kanaData[category][kanaType]) kanaList.push(...kanaData[category][kanaType]);
+                    }
+                }
+            });
+
+            if (kanaList.length === 0) {
+                console.log("No kana data found");
+                return;
+            }
+
+            selected = shuffle(kanaList);
+            current = 0;
+            score = 0;
+            total = selected.length;
+            
+            // 進入練習模式 - 隱藏主選單內容，顯示練習內容
+            const practiceTab = document.getElementById("practice-tab");
+            const chartTab = document.getElementById("chart-tab");
+            const navTabs = document.querySelector(".nav-tabs");
+            const languageSelect = document.querySelector('div[style*="margin-bottom: 20px"]');
+            
+            console.log("Hiding menu elements...");
+            
+            if (practiceTab) {
+                // 隱藏選項區域
+                const checkboxGrid = practiceTab.querySelector(".checkbox-grid");
+                const modeSelect = practiceTab.querySelector(".mode-select");
+                const startBtn = document.getElementById("start-btn");
+                
+                if (checkboxGrid) {
+                    checkboxGrid.style.display = "none";
+                    console.log("Checkbox grid hidden");
+                }
+                if (modeSelect) {
+                    modeSelect.style.display = "none";
+                    console.log("Mode select hidden");
+                }
+                if (startBtn) {
+                    startBtn.style.display = "none";
+                    console.log("Start button hidden");
+                }
+                if (navTabs) {
+                    navTabs.style.display = "none";
+                    console.log("Nav tabs hidden");
+                }
+                if (chartTab) {
+                    chartTab.style.display = "none";
+                    console.log("Chart tab hidden");
+                }
+                if (languageSelect) {
+                    languageSelect.style.display = "none";
+                    console.log("Language select hidden");
+                }
+                
+                // 創建練習頁面頂部導航
+                let quizHeader = document.createElement("div");
+                quizHeader.id = "quiz-header";
+                quizHeader.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);";
+                
+                const backButton = document.createElement("button");
+                backButton.innerHTML = "← " + texts[lang].backBtn;
+                backButton.style.cssText = "background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;";
+                backButton.onclick = returnToMenu;
+                
+                const title = document.createElement("h2");
+                title.style.cssText = "margin: 0; color: #2c3e50;";
+                title.innerText = texts[lang].quizTitle;
+                
+                const spacer = document.createElement("div");
+                spacer.style.width = "120px";
+                
+                quizHeader.appendChild(backButton);
+                quizHeader.appendChild(title);
+                quizHeader.appendChild(spacer);
+                
+                practiceTab.insertBefore(quizHeader, practiceTab.firstChild);
+                console.log("Quiz header created");
+            }
+            
+            // 強制顯示測驗內容
+            console.log("Force showing quiz content...");
+            
+            // 直接在這裡顯示測驗區域
+            const quizArea = document.getElementById("quiz-area");
+            console.log("Direct quiz area check:", quizArea);
+            
+            if (quizArea) {
+                quizArea.style.display = "block";
+                quizArea.style.visibility = "visible";
+                quizArea.style.opacity = "1";
+                quizArea.style.position = "relative";
+                quizArea.style.zIndex = "1000";
+                quizArea.style.backgroundColor = "rgba(255,255,255,0.95)";
+                quizArea.style.padding = "20px";
+                quizArea.style.borderRadius = "10px";
+                quizArea.style.marginTop = "20px";
+                console.log("Quiz area shown directly with enhanced styles");
+            } else {
+                console.log("Quiz area NOT found - creating inline");
+                // 直接創建測驗內容 - 使用安全的 DOM API
+                const practiceTab = document.getElementById("practice-tab");
+                if (practiceTab) {
+                    const inlineQuiz = document.createElement("div");
+                    inlineQuiz.id = "inline-quiz";
+                    
+                    // 使用安全的 DOM API 而不是 innerHTML
+                    const kanaDiv = document.createElement("div");
+                    kanaDiv.id = "kana";
+                    kanaDiv.style.cssText = "font-size: 72px; margin: 20px; color: #2c3e50; text-align: center;";
+                    
+                    const containerDiv = document.createElement("div");
+                    containerDiv.style.cssText = "text-align: center; margin: 20px;";
+                    
+                    const answerInput = document.createElement("input");
+                    answerInput.id = "answer";
+                    answerInput.placeholder = "輸入羅馬拼音";
+                    answerInput.style.cssText = "padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; margin: 5px;";
+                    // 不要在這裡加事件監聽
+                    
+                    const submitBtn = document.createElement("button");
+                    submitBtn.id = "submit-btn";
+                    submitBtn.textContent = "送出";
+                    submitBtn.style.cssText = "padding: 12px 24px; font-size: 16px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;";
+                    // 不要在這裡加事件監聽
+                    
+                    const feedbackDiv = document.createElement("div");
+                    feedbackDiv.id = "feedback";
+                    feedbackDiv.style.cssText = "font-size: 18px; margin: 20px; font-weight: 500;";
+                    
+                    const img = document.createElement("img");
+                    img.src = "咖波種子.gif";
+                    img.alt = "咖波種子 GIF";
+                    img.style.cssText = "width:300px; height:auto; margin-top: 20px;";
+                    
+                    // 組裝 DOM 結構
+                    containerDiv.appendChild(answerInput);
+                    containerDiv.appendChild(document.createElement("br"));
+                    containerDiv.appendChild(document.createElement("br"));
+                    containerDiv.appendChild(submitBtn);
+                    containerDiv.appendChild(feedbackDiv);
+                    containerDiv.appendChild(img);
+                    
+                    inlineQuiz.appendChild(kanaDiv);
+                    inlineQuiz.appendChild(containerDiv);
+                    
+                    practiceTab.appendChild(inlineQuiz);
+                    console.log("Inline quiz created using safe DOM API");
+                    
+                    // 重新設置事件監聽器（因為新創建的元素）
+                    setupQuizEventListeners();
                 }
             }
-        });
-
-        if (kanaList.length === 0) {
-            console.log("No kana data found");
-            return;
+            
+            const totalNumEl = document.getElementById("total-num");
+            if (totalNumEl) {
+                totalNumEl.innerText = total;
+                console.log("Total number set to:", total);
+            }
+            
+            console.log("Calling updateStats...");
+            updateStats();
+            console.log("Calling nextQuestion...");
+            nextQuestion();
+            console.log("Quiz started successfully");
+            showQuizContent();
+        } catch (error) {
+            console.error("Error in startQuiz:", error);
+            alert("發生錯誤，請重新整理頁面");
         }
-
-        selected = shuffle(kanaList);
-        current = 0;
-        score = 0;
-        total = selected.length;
-        
-        // 進入練習模式 - 隱藏主選單內容，顯示練習內容
-        const practiceTab = document.getElementById("practice-tab");
-        const chartTab = document.getElementById("chart-tab");
-        const navTabs = document.querySelector(".nav-tabs");
-        const languageSelect = document.querySelector('div[style*="margin-bottom: 20px"]');
-        
-        console.log("Hiding menu elements...");
-        
-        if (practiceTab) {
-            // 隱藏選項區域
-            const checkboxGrid = practiceTab.querySelector(".checkbox-grid");
-            const modeSelect = practiceTab.querySelector(".mode-select");
-            const startBtn = document.getElementById("start-btn");
-            
-            if (checkboxGrid) {
-                checkboxGrid.style.display = "none";
-                console.log("Checkbox grid hidden");
-            }
-            if (modeSelect) {
-                modeSelect.style.display = "none";
-                console.log("Mode select hidden");
-            }
-            if (startBtn) {
-                startBtn.style.display = "none";
-                console.log("Start button hidden");
-            }
-            if (navTabs) {
-                navTabs.style.display = "none";
-                console.log("Nav tabs hidden");
-            }
-            if (chartTab) {
-                chartTab.style.display = "none";
-                console.log("Chart tab hidden");
-            }
-            if (languageSelect) {
-                languageSelect.style.display = "none";
-                console.log("Language select hidden");
-            }
-            
-            // 創建練習頁面頂部導航
-            let quizHeader = document.createElement("div");
-            quizHeader.id = "quiz-header";
-            quizHeader.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);";
-            
-            const backButton = document.createElement("button");
-            backButton.innerHTML = "← " + texts[lang].backBtn;
-            backButton.style.cssText = "background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;";
-            backButton.onclick = returnToMenu;
-            
-            const title = document.createElement("h2");
-            title.style.cssText = "margin: 0; color: #2c3e50;";
-            title.innerText = texts[lang].quizTitle;
-            
-            const spacer = document.createElement("div");
-            spacer.style.width = "120px";
-            
-            quizHeader.appendChild(backButton);
-            quizHeader.appendChild(title);
-            quizHeader.appendChild(spacer);
-            
-            practiceTab.insertBefore(quizHeader, practiceTab.firstChild);
-            console.log("Quiz header created");
-        }
-        
-        // 強制顯示測驗內容
-        console.log("Force showing quiz content...");
-        
-        // 直接在這裡顯示測驗區域
-        const quizArea = document.getElementById("quiz-area");
-        console.log("Direct quiz area check:", quizArea);
-        
-        if (quizArea) {
-            quizArea.style.display = "block";
-            quizArea.style.visibility = "visible";
-            quizArea.style.opacity = "1";
-            quizArea.style.position = "relative";
-            quizArea.style.zIndex = "1000";
-            quizArea.style.backgroundColor = "rgba(255,255,255,0.95)";
-            quizArea.style.padding = "20px";
-            quizArea.style.borderRadius = "10px";
-            quizArea.style.marginTop = "20px";
-            console.log("Quiz area shown directly with enhanced styles");
-        } else {
-            console.log("Quiz area NOT found - creating inline");
-            // 直接創建測驗內容
-            const practiceTab = document.getElementById("practice-tab");
-            if (practiceTab) {
-                const inlineQuiz = document.createElement("div");
-                inlineQuiz.id = "inline-quiz";
-                inlineQuiz.innerHTML = `
-                    <div style="font-size: 72px; margin: 20px; color: #2c3e50; text-align: center;" id="kana"></div>
-                    <div style="text-align: center; margin: 20px;">
-                        <input id="answer" placeholder="輸入羅馬拼音" style="padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; margin: 5px;">
-                        <br><br>
-                        <button onclick="checkAnswer()" id="submit-btn" style="padding: 12px 24px; font-size: 16px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">送出</button>
-                        <div id="feedback" style="font-size: 18px; margin: 20px; font-weight: 500;"></div>
-                        <img src="咖波種子.gif" alt="咖波種子 GIF" style="width:300px; height:auto; margin-top: 20px;">
-                    </div>
-                `;
-                practiceTab.appendChild(inlineQuiz);
-                console.log("Inline quiz created");
-            }
-        }
-        
-        const totalNumEl = document.getElementById("total-num");
-        if (totalNumEl) {
-            totalNumEl.innerText = total;
-            console.log("Total number set to:", total);
-        }
-        
-        console.log("Calling updateStats...");
-        updateStats();
-        console.log("Calling nextQuestion...");
-        nextQuestion();
-        console.log("Quiz started successfully");
-        showQuizContent();
     }
 
     function showQuizContent() {
@@ -1082,7 +1158,24 @@
         
         if (!answerEl || !feedbackEl) return;
         
-        const user = answerEl.value.trim().toLowerCase();
+        // 安全性改進：輸入驗證與清理
+        let user = answerEl.value.trim().toLowerCase();
+        
+        // 防止 XSS 攻擊：移除危險字符
+        user = user.replace(/[<>\"'&]/g, '');
+        
+        // 限制輸入長度
+        if (user.length > 50) {
+            user = user.substring(0, 50);
+        }
+        
+        // 只允許字母、數字和基本符號
+        if (!/^[a-zA-Z0-9\s\/\-]+$/.test(user)) {
+            feedbackEl.innerText = "⚠️ 請只輸入有效的羅馬拼音";
+            feedbackEl.style.color = "#e74c3c";
+            return;
+        }
+        
         const char = selected[current][0];
         const correctAnswers = selected[current][1];
         
@@ -1166,6 +1259,8 @@
         console.log("Generated HTML length:", html.length);
         console.log("HTML preview:", html.substring(0, 200) + "...");
         
+        // 安全性改進：使用 textContent 而不是 innerHTML（如果可能）
+        // 由於這裡需要 HTML 格式，我們確保內容是安全的
         chartContainer.innerHTML = html;
         console.log("Chart container updated");
     }
@@ -1276,13 +1371,120 @@
         setLanguage();
         updateChart();
         
-        // 確保事件監聽器正確綁定
-        const startBtn = document.getElementById("start-btn");
-        if (startBtn) {
-            startBtn.onclick = startQuiz;
-        }
+        // 綁定所有事件監聽器
+        setupEventListeners();
         
         console.log("Page initialized"); // 調試信息
+    }
+    
+    // 設置所有事件監聽器
+    function setupEventListeners() {
+        console.log("Setting up event listeners...");
+        
+        // 開始練習按鈕
+        const startBtn = document.getElementById("start-btn");
+        if (startBtn) {
+            // 移除舊的事件監聽器（如果有的話）
+            startBtn.removeEventListener('click', startQuiz);
+            startBtn.addEventListener('click', startQuiz);
+            console.log("Start button event listener added");
+        } else {
+            console.log("Start button not found");
+        }
+        
+        // 語言選擇
+        const languageSelect = document.getElementById("language");
+        if (languageSelect) {
+            // 移除舊的事件監聽器（如果有的話）
+            languageSelect.removeEventListener('change', setLanguage);
+            languageSelect.addEventListener('change', setLanguage);
+            console.log("Language select event listener added");
+        } else {
+            console.log("Language select not found");
+        }
+        
+        // 導航標籤
+        const navTabs = document.querySelectorAll('.nav-tab');
+        navTabs.forEach(tab => {
+            // 移除舊的事件監聽器（如果有的話）
+            tab.removeEventListener('click', tabClickHandler);
+            tab.addEventListener('click', tabClickHandler);
+        });
+        console.log("Nav tabs event listeners added:", navTabs.length);
+        
+        // 假名類型選擇
+        const kanaTypeRadios = document.querySelectorAll('input[name="kana-type"]');
+        kanaTypeRadios.forEach(radio => {
+            // 移除舊的事件監聽器（如果有的話）
+            radio.removeEventListener('change', updateCategoryLabels);
+            radio.addEventListener('change', updateCategoryLabels);
+        });
+        console.log("Kana type radios event listeners added:", kanaTypeRadios.length);
+        
+        // 五十音表類型選擇
+        const chartTypeRadios = document.querySelectorAll('input[name="chart-type"]');
+        chartTypeRadios.forEach(radio => {
+            // 移除舊的事件監聽器（如果有的話）
+            radio.removeEventListener('change', updateChart);
+            radio.addEventListener('change', updateChart);
+        });
+        console.log("Chart type radios event listeners added:", chartTypeRadios.length);
+        
+        // 答案輸入框和送出按鈕（這些可能在動態創建時才存在）
+        setupQuizEventListeners();
+        
+        console.log("All event listeners set up successfully");
+    }
+    
+    // 設置測驗相關的事件監聽器
+    function setupQuizEventListeners() {
+        // 答案輸入框
+        const answerInput = document.getElementById("answer");
+        if (answerInput) {
+            // 移除舊的事件監聽器（如果有的話）
+            answerInput.removeEventListener('keydown', answerKeydownHandler);
+            answerInput.addEventListener('keydown', answerKeydownHandler);
+            console.log("Answer input event listener added");
+        }
+        
+        // 送出按鈕
+        const submitBtn = document.getElementById("submit-btn");
+        if (submitBtn) {
+            // 移除舊的事件監聽器（如果有的話）
+            submitBtn.removeEventListener('click', checkAnswer);
+            submitBtn.addEventListener('click', checkAnswer);
+            console.log("Submit button event listener added");
+        }
+    }
+    
+    // 導航標籤點擊處理器
+    function tabClickHandler() {
+        const tabName = this.getAttribute('data-tab');
+        console.log("Tab clicked:", tabName);
+        showTab(tabName);
+    }
+    
+    // 答案輸入框按鍵處理器
+    function answerKeydownHandler(event) {
+        if (event.key === 'Enter') {
+            console.log("Enter key pressed in answer input");
+            checkAnswer();
+        }
+    }
+    
+    // 更新類別標籤
+    function updateCategoryLabels() {
+        const kanaType = document.querySelector('input[name="kana-type"]:checked').value;
+        
+        if (kanaType === 'katakana') {
+            document.getElementById('cat-dakuten').textContent = '濁音 (ガ,ザ,ダ,バ)';
+            document.getElementById('cat-handakuten').textContent = '半濁音 (パ行)';
+            document.getElementById('cat-youon').textContent = '拗音 (キャ,シャ,チャ...)';
+        } else {
+            document.getElementById('cat-dakuten').textContent = '濁音 (が,ざ,だ,ば)';
+            document.getElementById('cat-handakuten').textContent = '半濁音 (ぱ行)';
+            document.getElementById('cat-youon').textContent = '拗音 (きゃ,しゃ,ちゃ...)';
+        }
     }
     
     // 當頁面加載完成時初始化
