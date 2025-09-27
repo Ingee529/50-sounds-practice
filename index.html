@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日文五十音練習器 | 完全免費線上學習</title>
+    <meta name="description" content="免費線上日文五十音練習器，支援平假名、片假名學習。Google帳號快速註冊，追蹤學習進度，提升日語基礎能力。">
+    <meta name="keywords" content="日文,五十音,平假名,片假名,練習,學習,免費,線上,日語,基礎,發音,記憶">
+    <meta name="author" content="Ingee Yang">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="zh-TW">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://japanese50sounds.com/">
+    <meta property="og:title" content="日文五十音練習器 | 完全免費線上學習">
+    <meta property="og:description" content="免費線上日文五十音練習器，支援平假名、片假名學習，Google帳號快速註冊，追蹤學習進度">
+    <meta property="og:locale" content="zh_TW">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://japanese50sounds.com/">
+    <meta name="twitter:title" content="日文五十音練習器 | 完全免費線上學習">
+    <meta name="twitter:description" content="免費線上日文五十音練習器，支援平假名、片假名學習">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://japanese50sounds.com/">
+    
+    <!-- hreflang -->
+    <link rel="alternate" hreflang="en" href="https://japanese50sounds.com/en/">
+    <link rel="alternate" hreflang="zh-TW" href="https://japanese50sounds.com/zh/">
+    <link rel="alternate" hreflang="x-default" href="https://japanese50sounds.com/">
+    
+    <!-- JSON-LD 結構化資料 -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "日文五十音練習器",
+        "alternateName": "Japanese 50 Sounds Practice",
+        "description": "免費線上日文五十音練習器，支援平假名、片假名學習，Google帳號快速註冊，追蹤學習進度",
+        "url": "https://japanese50sounds.com/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Ingee Yang"
+        },
+        "inLanguage": "zh-TW",
+        "educationalLevel": "Beginner to Intermediate",
+        "teaches": ["Japanese Hiragana", "Japanese Katakana", "Kana Reading"]
+    }
+    </script>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CR8D4QH6FF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CR8D4QH6FF');
+    </script>
+    
+    <!-- i18next internationalization library -->
+    <script src="https://unpkg.com/i18next@21.10.0/dist/umd/i18next.min.js"></script>
+    <!-- 核心架構模組 -->
+    <script type="module" src="js/core/events.js"></script>
+    <script type="module" src="js/core/state.js"></script>
+    
+    <!-- i18n 系統 -->
+    <script src="js/i18n/translations.js"></script>
+    <script src="js/config.js"></script>
+    <script type="module" src="js/i18n/i18n.js"></script>
+    
+    <!-- 等待 i18n 載入完成後再載入主應用 -->
+    <script>
+        // 等待 i18n 載入完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 確保 i18n 系統已載入
+            if (window.i18next) {
+                console.log('✅ i18n 系統已載入');
+                // 動態載入主應用
+                const script = document.createElement('script');
+                script.type = 'module';
+                script.src = 'js/core/app.js?v=1758662691';
+                document.head.appendChild(script);
+            } else {
+                console.error('❌ i18n 系統載入失敗');
+            }
+        });
+    </script>
+    
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+</head>
+<body>
+
+    <!-- 認證界面 -->
+    <div id="auth-screen" class="container hidden">
+        <!-- 頂部導航區 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <button onclick="showGuestApp()" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                ← <span id="back-to-guest"></span>
+            </button>
+            
+            <!-- Authentication page language selection -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label for="auth-language" style="font-size: 14px; color: #666;">🌐</label>
+                <select id="auth-language" onchange="setLanguageAndUpdateAuth()" style="padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    <option value="zh">繁體中文</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </div>
+        
+        <h1 id="auth-title"></h1>
+        <p style="margin: -10px 0 30px 0; color: #666; font-size: 14px;" id="auth-author">Author: Ingee</p>
+        
+        <div class="auth-container">
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-auth-tab="login" id="login-tab" data-i18n="app.login"></div>
+                <div class="auth-tab" data-auth-tab="register" id="register-tab" data-i18n="app.register"></div>
+            </div>
+            
+            <!-- 登入表單 -->
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-identifier" id="login-identifier-label" data-i18n="auth.loginAccount"></label>
+                    <input type="text" id="login-identifier" required 
+                           data-i18n-attr="placeholder" data-i18n-placeholder="auth.loginAccount">
+                </div>
+                <div class="form-group">
+                    <label for="login-password" id="login-password-label" data-i18n="auth.password"></label>
+                    <div class="password-input-container">
+                        <input type="password" id="login-password" required
+                               data-i18n-attr="placeholder" data-i18n-placeholder="auth.password">
+                        <button type="button" class="password-toggle" onclick="togglePassword('login-password')">👁</button>
+                    </div>
+                </div>
+                <button type="submit" class="auth-button" id="login-button" data-i18n="app.login"></button>
+                <div id="login-message"></div>
+                
+                <!-- Google Login Section -->
+                <div class="oauth-divider">
+                    <span id="oauth-divider-text"></span>
+                </div>
+                <div id="google-signin-button"></div>
+            </form>
+            
+            <!-- 註冊表單 -->
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="register-username" id="register-username-label" data-i18n="auth.username"></label>
+                    <input type="text" id="register-username" required minlength="3"
+                           data-i18n-attr="placeholder" data-i18n-placeholder="auth.username">
+                </div>
+                <div class="form-group">
+                    <label for="register-email" id="register-email-label" data-i18n="auth.email"></label>
+                    <input type="email" id="register-email" required
+                           data-i18n-attr="placeholder" data-i18n-placeholder="auth.email">
+                </div>
+                <div class="form-group">
+                    <label for="register-display-name" id="register-display-name-label" data-i18n="auth.displayName"></label>
+                    <input type="text" id="register-display-name" placeholder=""
+                           data-i18n-attr="placeholder" data-i18n-placeholder="auth.displayNamePlaceholder">
+                </div>
+                <div class="form-group">
+                    <label for="register-birth-date" id="register-birth-date-label" data-i18n="auth.birthDate"></label>
+                    <input type="date" id="register-birth-date">
+                </div>
+                <div class="form-group">
+                    <label for="register-language" id="register-language-label" data-i18n="auth.language"></label>
+                    <select id="register-language" onchange="onLanguagePreferenceChange()" style="width: 100%; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 14px; transition: border-color 0.3s; box-sizing: border-box;">
+                        <option value="zh">繁體中文</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="register-password" id="register-password-label"></label>
+                    <div class="password-input-container">
+                        <input type="password" id="register-password" required minlength="8" data-i18n-attr="placeholder" data-i18n-placeholder="auth.password">
+                        <button type="button" class="password-toggle" onclick="togglePassword('register-password')">👁</button>
+                    </div>
+                    <div class="password-requirements" id="password-requirements">
+                        <div class="password-requirement" id="req-length">
+                            <span class="icon">❌</span>
+                            <span id="req-length-text" data-i18n="auth.reqLength"></span>
+                        </div>
+                        <div class="password-requirement" id="req-letter">
+                            <span class="icon">❌</span>
+                            <span id="req-letter-text" data-i18n="auth.reqLetter"></span>
+                        </div>
+                        <div class="password-requirement" id="req-number">
+                            <span class="icon">❌</span>
+                            <span id="req-number-text" data-i18n="auth.reqNumber"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="register-password-confirm" id="register-password-confirm-label"></label>
+                    <div class="password-input-container">
+                        <input type="password" id="register-password-confirm" required data-i18n-attr="placeholder" data-i18n-placeholder="auth.confirmPassword">
+                        <button type="button" class="password-toggle" onclick="togglePassword('register-password-confirm')">👁</button>
+                    </div>
+                </div>
+                <button type="submit" class="auth-button" id="register-button" data-i18n="app.register"></button>
+                <div id="register-message"></div>
+                
+                <!-- Google Register Section -->
+                <div class="oauth-divider">
+                    <span id="oauth-divider-text-register"></span>
+                </div>
+                <div id="google-register-button"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Google 註冊完成設定頁面 -->
+    <div id="google-profile-setup" class="page-content hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); z-index: 1000; overflow-y: auto;">
+        <div class="container">
+        <div class="auth-container">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 id="complete-profile-title"></h2>
+                <p id="complete-profile-subtitle" style="color: #6c757d; margin: 10px 0;"></p>
+            </div>
+            
+            <form id="google-profile-form">
+                <div class="form-group">
+                    <label for="google-nickname" id="google-nickname-label"></label>
+                    <input type="text" id="google-nickname" placeholder="" maxlength="100">
+                </div>
+                
+                <div class="form-group">
+                    <label for="google-birth-date" id="google-birth-date-label"></label>
+                    <input type="date" id="google-birth-date">
+                </div>
+                
+                <div class="form-group">
+                    <label for="google-language" id="google-language-label"></label>
+                    <select id="google-language" style="width: 100%; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 14px; transition: border-color 0.3s; box-sizing: border-box;">
+                            <option value="zh">繁體中文</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="auth-button" id="skip-setup-btn" onclick="skipGoogleSetup()" style="background: #6c757d; flex: 1;"></button>
+                    <button type="submit" class="auth-button" id="save-profile-btn" style="flex: 2;"></button>
+                </div>
+                
+                <div id="google-profile-message"></div>
+            </form>
+        </div>
+        </div>
+    </div>
+
+    <!-- 主應用界面 -->
+    <div id="main-app" class="container hidden">
+
+        <!-- 用戶資訊和登入按鈕區域 -->
+        <div class="user-info" id="user-info" style="display: none;">
+            <div class="user-avatar" id="user-avatar">U</div>
+            <div class="user-details">
+                <p class="user-name" id="user-name"></p>
+                <p class="user-email" id="user-email">user@example.com</p>
+            </div>
+            <button class="logout-btn" id="logout-btn"></button>
+        </div>
+        
+        <div class="guest-info" id="guest-info">
+            <div style="display: flex; align-items: center; gap: 15px; padding: 10px 15px; background: rgba(255, 193, 7, 0.1); border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffc107;">
+                <div style="font-size: 20px;">⚠️</div>
+                <div style="flex: 1; text-align: left;">
+                    <p style="margin: 0; font-weight: 500; color: #856404;" id="guest-mode-title"></p>
+                    <p style="margin: 0; font-size: 12px; color: #856404;" id="guest-warning-text"></p>
+                </div>
+                <button class="auth-btn" id="login-signup-btn" onclick="showAuthScreen()"></button>
+            </div>
+        </div>
+
+        <h1 id="title"></h1>
+        <p style="margin: -10px 0 20px 0; color: #666; font-size: 14px;" id="main-author">Author: Ingee</p>
+
+        <!-- Language selection -->
+        <div style="margin-bottom: 20px;">
+            <label for="language" id="language-label">🌐 Language:</label>
+            <select id="language">
+                <option value="zh">中文</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
+        <!-- Navigation tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="practice">
+                <span id="nav-practice"></span>
+            </div>
+            <div class="nav-tab" data-tab="chart">
+                <span id="nav-chart"></span>
+            </div>
+            <div class="nav-tab" data-tab="statistics" id="statistics-nav-tab" style="display: block;">
+                <span id="nav-statistics"></span>
+            </div>
+        </div>
+
+        <!-- Practice mode tab content -->
+        <div id="practice-tab" class="tab-content active">
+            <!-- 內容將由模板系統動態載入 -->
+        </div>
+
+        <!-- Kana chart tab content -->
+        <div id="chart-tab" class="tab-content">
+            <!-- 內容將由模板系統動態載入 -->
+        </div>
+        
+        <!-- Learning statistics tab content -->
+        <div id="statistics-tab" class="tab-content">
+            <!-- 內容將由模板系統動態載入 -->
+                    </div>
+                </div>
+                
+    
+    <!-- 主要應用腳本 -->
+    <script src="js/modules/safari-utils.js"></script>
+    <script src="js/modules/main-app.js"></script>
+</body>
+</html>

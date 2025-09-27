@@ -1,0 +1,354 @@
+<!-- Kana type selection -->
+<div class="mode-select">
+    <label>
+        <input type="radio" name="kana-type" value="hiragana" checked>
+        <span id="type-hiragana"></span>
+    </label>
+    <label>
+        <input type="radio" name="kana-type" value="katakana">
+        <span id="type-katakana"></span>
+    </label>
+    <label>
+        <input type="radio" name="kana-type" value="mixed">
+        <span id="type-mixed"></span>
+    </label>
+</div>
+
+<!-- Practice mode selection (NEW) -->
+<div class="practice-mode-select">
+    <h4 id="practice-mode-title"></h4>
+    <div class="mode-options">
+        <label class="mode-option quick-mode">
+            <input type="radio" name="practice-mode" value="quick" checked>
+            <div class="mode-icon">🚀</div>
+            <div class="mode-info">
+                <span class="mode-name" id="mode-quick-name"></span>
+                <span class="mode-desc" id="mode-quick-desc"></span>
+            </div>
+        </label>
+        
+        <label class="mode-option custom-mode">
+            <input type="radio" name="practice-mode" value="custom">
+            <div class="mode-icon">⚙️</div>
+            <div class="mode-info">
+                <span class="mode-name" id="mode-custom-name"></span>
+                <span class="mode-desc" id="mode-custom-desc"></span>
+            </div>
+        </label>
+    </div>
+</div>
+
+<!-- Quick mode options -->
+<div id="quick-mode-options" class="mode-config">
+    <!-- Range selection for quick mode -->
+    <div class="config-group">
+        <label id="quick-range-label">練習範圍：</label>
+        <div class="quick-range-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 10px 0;">
+            <label class="quick-range-option" style="display: flex; align-items: center; padding: 8px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+                <input type="checkbox" name="quick-range" value="basic" checked style="margin-right: 8px;">
+                <span id="quick-basic-label">清音 (五十音)</span>
+            </label>
+            <label class="quick-range-option" style="display: flex; align-items: center; padding: 8px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+                <input type="checkbox" name="quick-range" value="dakuten" style="margin-right: 8px;">
+                <span id="quick-dakuten-label">濁音 (が、ざ、だ...)</span>
+            </label>
+            <label class="quick-range-option" style="display: flex; align-items: center; padding: 8px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+                <input type="checkbox" name="quick-range" value="handakuten" style="margin-right: 8px;">
+                <span id="quick-handakuten-label">半濁音 (ぱ行)</span>
+            </label>
+            <label class="quick-range-option" style="display: flex; align-items: center; padding: 8px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer;">
+                <input type="checkbox" name="quick-range" value="youon" style="margin-right: 8px;">
+                <span id="quick-youon-label">拗音 (きゃ、しゅ、ちょ...)</span>
+            </label>
+        </div>
+    </div>
+    
+    <!-- Question count selection -->
+    <div class="config-group">
+        <label for="quick-question-count" id="quick-count-label">題數：</label>
+        <select id="quick-question-count">
+            <option value="10" id="quick-count-10">10 題</option>
+            <option value="15" selected id="quick-count-15">15 題</option>
+            <option value="20" id="quick-count-20">20 題</option>
+        </select>
+    </div>
+</div>
+
+<!-- Custom mode options (new row-based selection) -->
+<div id="custom-mode-options" class="mode-config hidden">
+    <!-- Language selection for custom practice -->
+    
+    <!-- Quick selection buttons -->
+    <div class="quick-selection">
+        <h5 id="quick-selection-title">快速選擇：</h5>
+        <div class="quick-buttons">
+            <button type="button" class="quick-btn" id="basic-select-all-btn" onclick="selectCategory('basic')">清音全選</button>
+            <button type="button" class="quick-btn" id="dakuten-select-all-btn" onclick="selectCategory('dakuten')">濁音全選</button>
+            <button type="button" class="quick-btn" id="handakuten-select-all-btn" onclick="selectCategory('handakuten')">半濁音全選</button>
+            <button type="button" class="quick-btn" id="youon-select-all-btn" onclick="selectCategory('youon')">拗音全選</button>
+            <button type="button" class="quick-btn clear-btn" id="clear-all-selection-btn" onclick="clearAllSelection()">全部清除</button>
+        </div>
+    </div>
+
+    <!-- Row-based selection -->
+    <div class="row-selection">
+        <h5 id="detailed-selection-title" data-i18n="practice.detailedSelection">詳細選擇：</h5>
+        
+        <!-- Basic sounds by rows -->
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-emoji">📝</span>
+                <span class="category-title" id="basic-category-title">基本音（清音）</span>
+            </div>
+            <div class="row-grid">
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="a-row" data-category="basic">
+                    <span class="row-name">あ行</span>
+                    <span class="row-preview">あいうえお</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="ka-row" data-category="basic">
+                    <span class="row-name">か行</span>
+                    <span class="row-preview">かきくけこ</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="sa-row" data-category="basic">
+                    <span class="row-name">さ行</span>
+                    <span class="row-preview">さしすせそ</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="ta-row" data-category="basic">
+                    <span class="row-name">た行</span>
+                    <span class="row-preview">たちつてと</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="na-row" data-category="basic">
+                    <span class="row-name">な行</span>
+                    <span class="row-preview">なにぬねの</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="ha-row" data-category="basic">
+                    <span class="row-name">は行</span>
+                    <span class="row-preview">はひふへほ</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="ma-row" data-category="basic">
+                    <span class="row-name">ま行</span>
+                    <span class="row-preview">まみむめも</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="ya-row" data-category="basic">
+                    <span class="row-name">や行</span>
+                    <span class="row-preview">や　ゆ　よ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="ra-row" data-category="basic">
+                    <span class="row-name">ら行</span>
+                    <span class="row-preview">らりるれろ</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="wa-row" data-category="basic">
+                    <span class="row-name">わ行</span>
+                    <span class="row-preview">わ　　をん</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Dakuten sounds -->
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-emoji">🌪️</span>
+                <span class="category-title" id="dakuten-category-title">濁音</span>
+            </div>
+            <div class="row-grid">
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="ga-row" data-category="dakuten">
+                    <span class="row-name">が行</span>
+                    <span class="row-preview">がぎぐげご</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="za-row" data-category="dakuten">
+                    <span class="row-name">ざ行</span>
+                    <span class="row-preview">ざじずぜぞ</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="da-row" data-category="dakuten">
+                    <span class="row-name">だ行</span>
+                    <span class="row-preview">だぢづでど</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="ba-row" data-category="dakuten">
+                    <span class="row-name">ば行</span>
+                    <span class="row-preview">ばびぶべぼ</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Handakuten sounds -->
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-emoji">💨</span>
+                <span class="category-title" id="handakuten-category-title">半濁音</span>
+            </div>
+            <div class="row-grid">
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="pa-row" data-category="handakuten">
+                    <span class="row-name">ぱ行</span>
+                    <span class="row-preview">ぱぴぷぺぽ</span>
+                    <span class="row-count">(5字)</span>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Youon sounds by rows -->
+        <div class="category-section">
+            <div class="category-header">
+                <span class="category-emoji">🌸</span>
+                <span class="category-title" id="youon-category-title">拗音</span>
+            </div>
+            <div class="row-grid">
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="kya-row" data-category="youon">
+                    <span class="row-name">きゃ行</span>
+                    <span class="row-preview">きゃきゅきょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="sha-row" data-category="youon">
+                    <span class="row-name">しゃ行</span>
+                    <span class="row-preview">しゃしゅしょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="cha-row" data-category="youon">
+                    <span class="row-name">ちゃ行</span>
+                    <span class="row-preview">ちゃちゅちょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="nya-row" data-category="youon">
+                    <span class="row-name">にゃ行</span>
+                    <span class="row-preview">にゃにゅにょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="hya-row" data-category="youon">
+                    <span class="row-name">ひゃ行</span>
+                    <span class="row-preview">ひゃひゅひょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="mya-row" data-category="youon">
+                    <span class="row-name">みゃ行</span>
+                    <span class="row-preview">みゃみゅみょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="rya-row" data-category="youon">
+                    <span class="row-name">りゃ行</span>
+                    <span class="row-preview">りゃりゅりょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="gya-row" data-category="youon">
+                    <span class="row-name">ぎゃ行</span>
+                    <span class="row-preview">ぎゃぎゅぎょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="ja-row" data-category="youon">
+                    <span class="row-name">じゃ行</span>
+                    <span class="row-preview">じゃじゅじょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="bya-row" data-category="youon">
+                    <span class="row-name">びゃ行</span>
+                    <span class="row-preview">びゃびゅびょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+                <label class="row-item">
+                    <input type="checkbox" name="kana-row" value="pya-row" data-category="youon">
+                    <span class="row-name">ぴゃ行</span>
+                    <span class="row-preview">ぴゃぴゅぴょ</span>
+                    <span class="row-count">(3字)</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selection summary and practice options -->
+    <div class="selection-summary">
+        <div class="summary-info">
+            <span id="selected-count"></span>
+        </div>
+        <div class="practice-options">
+            <label id="practice-amount-label" data-i18n="practice.practiceAmount">練習量：</label>
+            <label class="practice-amount">
+                <input type="radio" name="practice-amount" value="all" checked>
+                <span id="all-practice-label" data-i18n="practice.allPractice">全部練習</span> (<span id="total-selected">0</span><span id="questions-label" data-i18n="practice.questions">題</span>)
+            </label>
+            <label class="practice-amount">
+                <input type="radio" name="practice-amount" value="15">
+                <span id="random-15-label" data-i18n="practice.random15">隨機15題</span>
+            </label>
+            <label class="practice-amount">
+                <input type="radio" name="practice-amount" value="30">
+                <span id="random-30-label" data-i18n="practice.random30">隨機30題</span>
+            </label>
+        </div>
+    </div>
+</div>
+
+<button id="start-btn"></button>
+
+<!-- Quiz area -->
+<div id="quiz-area" style="display: none;">
+    <!-- Progress bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress"></div>
+    </div>
+    
+    <!-- Statistics info -->
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-number" id="current-num">1</div>
+            <div class="stat-label" id="stat-current"></div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="total-num">0</div>
+            <div class="stat-label" id="stat-total"></div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="score-num">0</div>
+            <div class="stat-label" id="stat-score"></div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="accuracy">0%</div>
+            <div class="stat-label" id="stat-accuracy"></div>
+        </div>
+    </div>
+
+    <!-- Quiz section -->
+    <div class="quiz-container">
+        <div class="kana" id="kana"></div>
+        <input id="answer" placeholder="請輸入羅馬字" data-i18n-placeholder="practice.enterRomaji">
+        <button id="submit-btn" data-i18n="practice.submitAnswer">提交</button>
+        <div class="result" id="feedback"></div>
+        <img src="kabo-seed.gif" style="width:300px; height:auto; margin-top: 20px;" alt="Kabo Seed GIF" style="width:300px; height:auto; margin-top: 20px;">
+    </div>
+</div> 

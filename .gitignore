@@ -1,0 +1,26 @@
+# 敏感檔案
+.env
+.env.production
+*.db
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# 日誌檔案
+*.log
+
+# 系統檔案
+.DS_Store
+Thumbs.db

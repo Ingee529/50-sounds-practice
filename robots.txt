@@ -1,0 +1,26 @@
+User-agent: *
+Allow: /
+
+# 多語言 sitemap
+Sitemap: https://japanese50sounds.com/sitemap.xml
+
+# 禁止爬取不必要的目錄
+Disallow: /js/modules/
+Disallow: /templates/
+Disallow: /staticfiles/
+Disallow: /backend/
+Disallow: /venv/
+Disallow: /__pycache__/
+Disallow: /*.pyc
+Disallow: /*.log
+
+# 允許爬取主要資源
+Allow: /css/
+Allow: /js/core/
+Allow: /js/i18n/
+Allow: /images/
+Allow: /favicon.ico
+Allow: /kabo-seed.gif
+
+# 爬取延遲（可選）
+Crawl-delay: 1
